@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build && node scripts/write-sw.mjs",
     "preview": "vite preview",
+    "serve:test": "node scripts/serve-production.mjs",
     "test": "playwright test"
   },
   "devDependencies": {

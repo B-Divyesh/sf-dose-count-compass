@@ -147,11 +147,7 @@ function home() {
 }
 function deviceCard(d: Device, preview = false) {
   const [kind, text] = status(d);
-  const percent = Math.max(
-    0,
-    Math.min(100, Math.round((d.remaining / d.total) * 100)),
-  );
-  return `<article class="device-card ${kind}" data-device="${d.id}"><div class="device-top"><p class="device-kind">${d.kind}</p><span class="status ${kind}">${text}</span></div><h3>${esc(d.name)}</h3><div class="count-row"><strong>${d.remaining}</strong><span>of ${d.total} left<br>${unit(d, d.remaining)}</span></div><div class="gauge" role="progressbar" aria-label="Doses remaining" aria-valuemin="0" aria-valuemax="${d.total}" aria-valuenow="${d.remaining}"><span style="width:${percent}%"></span></div>${preview ? '<p class="small">A refill threshold is set at 30 puffs.</p>' : `<div class="card-actions"><button data-action="dose" data-id="${d.id}" ${d.remaining === 0 ? "disabled" : ""}>Log 1 ${d.kind === "Spray" ? "spray" : d.kind === "Injector" ? "device" : d.kind === "Other" ? "dose" : "puff"}</button><button class="quiet" data-action="edit" data-id="${d.id}">Edit</button></div>`}</article>`;
+  return `<article class="device-card ${kind}" data-device="${d.id}"><div class="device-top"><p class="device-kind">${d.kind}</p><span class="status ${kind}">${text}</span></div><h3>${esc(d.name)}</h3><div class="count-row"><strong>${d.remaining}</strong><span>of ${d.total} left<br>${unit(d, d.remaining)}</span></div><progress class="gauge" aria-label="Doses remaining" max="${d.total}" value="${d.remaining}">${d.remaining} of ${d.total}</progress>${preview ? '<p class="small">A refill threshold is set at 30 puffs.</p>' : `<div class="card-actions"><button data-action="dose" data-id="${d.id}" ${d.remaining === 0 ? "disabled" : ""}>Log 1 ${d.kind === "Spray" ? "spray" : d.kind === "Injector" ? "device" : d.kind === "Other" ? "dose" : "puff"}</button><button class="quiet" data-action="edit" data-id="${d.id}">Edit</button></div>`}</article>`;
 }
 function dashboard() {
   const low = devices.filter((d) => d.remaining <= d.threshold).length;
@@ -421,7 +417,7 @@ function printCard() {
     return;
   }
   win.document.write(
-    `<!doctype html><title>Dose Count Compass inventory card</title><style>body{font:16px Arial;padding:28px;color:#19362e}h1{font-family:Georgia}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #888;padding:10px;text-align:left}</style><h1>Dose Count Compass inventory</h1><p>Check physical indicators and labels too. Printed ${new Date().toLocaleDateString()}.</p><table><thead><tr><th>Device</th><th>Type</th><th>Left</th><th>Refill at</th></tr></thead><tbody>${entries}</tbody></table>`,
+    `<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dose Count Compass inventory card</title><link rel="stylesheet" href="/print.css"></head><body><main><h1>Dose Count Compass inventory</h1><p>Check physical indicators and labels too. Printed ${new Date().toLocaleDateString()}.</p><table><thead><tr><th>Device</th><th>Type</th><th>Left</th><th>Refill at</th></tr></thead><tbody>${entries}</tbody></table></main></body></html>`,
   );
   win.document.close();
   win.onload = () => win.print();
@@ -462,9 +458,11 @@ async function init() {
     void acceptLicense(token);
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js").catch(() => undefined);
-    navigator.serviceWorker.addEventListener("controllerchange", () =>
-      toast("A new version is ready."),
-    );
+    let hasController = Boolean(navigator.serviceWorker.controller);
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (hasController) toast("A new version is ready.");
+      hasController = true;
+    });
   }
   window.addEventListener("popstate", () => {
     demo = location.pathname === "/demo";

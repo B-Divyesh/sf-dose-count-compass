@@ -1,45 +1,82 @@
-# Handoff — Dose Count Compass v1
+# Handoff — Dose Count Compass CSP repair
 
-## Delivered
+## Repaired
 
-- Offline-first Vite + TypeScript PWA with a separate IndexedDB namespace for
-  real use (`real:dose-count-compass`) and demo use (`demo:dose-count-compass`).
-- Device-specific inhaler, spray, injector, and other counters; dose logging;
-  refill threshold status; editing; JSON/CSV export/import; printable inventory
-  card; and clear safety language.
-- `/demo` starts with three realistic sample devices and retains a persistent
-  sandbox banner with reset and start-for-real actions.
-- `/privacy`, `/terms`, a styled 404 state, manifest, service worker,
-  robots/sitemap, static-host configuration, one-time $9 license checkout and
-  restore/verify flow.
-- Original paper-cut hero art at `public/hero-diorama.webp` (37 KB). Prompt,
-  model provenance, visual tokens, and interaction policy are in `design.md`.
+- Reproduced candidate `352c0ab494d410d0aee967e476d67985b7b59902` on the
+  live `/demo` route with three runtime `style` attributes and three browser
+  console errors from `style-src 'self'`.
+- Replaced dynamic gauge `style="width:…"` attributes with semantic native
+  `<progress>` elements. Their light, dark, low, and empty states now come only
+  from the bundled stylesheet.
+- Replaced the printable card's injected `<style>` block with the same-origin
+  `/print.css` asset. The strict deployment CSP is unchanged and contains no
+  `unsafe-inline` exception.
+- Added a production-header test server and a focused Playwright regression.
+  It loads built `dist/` under the deployment CSP, exercises dose, edit, and
+  print flows, asserts zero CSP console errors, and rejects runtime inline
+  styles in the app and print window.
+- Added `print.css` to the offline shell, advanced the service-worker cache to
+  `dose-compass-v2`, and removed superseded Dose Count Compass caches on update.
+  First install no longer reports a false update notification.
+- Fixed dark-theme device-card and eyebrow contrast found during the repair
+  audit. The axe check now covers light and dark themes.
 
-## Run and verify
+## Clean build and automated checks
+
+Executed from `/work/repo` on 2026-08-28:
 
 ```sh
-npm install
-npm run build
+npm ci && npm run build
+npx tsc --noEmit
 npm test
 ```
 
-Build output is `dist/` and has `dist/index.html` at its root. The Playwright
-suite has seven passing tests: all five documented claims, keyboard device
-creation, and an axe-core serious/critical accessibility check. Claims are in
-`claims.json`; the sandbox details are in `demo.md`.
+- Clean install/build: pass; `dist/index.html` exists.
+- TypeScript: pass.
+- Playwright 1.58.2: **8/8 pass**. This covers all five claims, browser CSP,
+  keyboard device creation, light/dark accessibility, production print, and
+  offline reload.
+- Production output: initial JS **17.23 KB / 6.59 KB gzip**; CSS **9.40 KB /
+  2.96 KB gzip**; total Lighthouse transfer **68 KiB**.
+- Static scan of `src`, `tests`, `scripts`, `public`, and `dist`: no `style=`
+  attributes, `<style>` blocks, `unsafe-inline`, or `javascript:` URLs.
 
-## Measured checks
+## Browser, mobile, offline, privacy, and accessibility evidence
 
-- `npm run build` passes. Initial JS: 6.63 KB gzip; CSS: 2.89 KB gzip.
-- `npm test` passes (7/7), including a service-worker offline reload from
-  `/demo`, local-only request checking, and exports/print verification.
-- Lighthouse mobile-style run: Performance **100**, Accessibility **100**,
-  LCP **1.6 s**, CLS **0**.
-- Manual 390px and desktop visual checks passed. The paper-cut image has
-  explicit dimensions, alt text, and is under the 300 KB hero budget.
+- `/opt/fleet/lib/verify-url.sh http://127.0.0.1:4173/ ...`: HTTP 200;
+  no console errors; title and `lang="en"`; one `h1`; one `main`; no missing
+  image alt text or unnamed buttons.
+- Chromium at 390×844 on `/`, `/demo`, `/log`, `/privacy`, `/terms`, and the
+  designed missing-page state: no horizontal overflow, no console errors, no
+  CSP errors, one `h1`, one `main`, and zero runtime inline styles.
+- Axe 4.10.3 on `/demo` in light and dark modes: zero serious or critical
+  findings. Keyboard-only device creation passes. Reduced-motion transition
+  duration resolves to `0.01ms`.
+- Offline/update check: the page is service-worker controlled, reloads
+  offline, exposes only cache `dose-compass-v2`, and opens the inventory card
+  offline with `/print.css` applied.
+- Privacy check: the complete route crawl and demo dose flow made zero
+  cross-origin requests. Demo and real data remain in separate IndexedDB
+  namespaces.
+- Mobile Lighthouse 13.0.3: Performance **100**, Accessibility **100**, Best
+  Practices **100**, SEO **100**, LCP **1.7 s**, CLS **0**.
 
-## Known gaps and next steps
+Evidence screenshots and reports from the disposable worker are under
+`test-results/repair/` and are intentionally not committed.
 
-No known functional gaps for v1. The count is intentionally not presented as a
-medical or device-status guarantee; users must keep checking the device
-indicator, label, expiry date, and clinician or pharmacist instructions.
+## Deployment and live identity
+
+Deployment target: static PWA at
+`https://dose-count-compass.sociobot.in`, using:
+
+```sh
+/opt/fleet/lib/deploy-static.sh dose-count-compass dist
+```
+
+Post-deploy verification will be recorded here after upload.
+
+## Known gaps
+
+No known repair gaps. The counter remains a personal log, not a medical or
+device-status guarantee. Users must check the physical device, label, expiry
+date, and clinician or pharmacist instructions.

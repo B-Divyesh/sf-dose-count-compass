@@ -322,21 +322,37 @@ figcaption {
   line-height: 1.45;
 }
 .gauge {
+  display: block;
+  width: 100%;
   height: 13px;
+  appearance: none;
+  -webkit-appearance: none;
   background: var(--paper);
   border: 2px solid var(--ink);
   margin: 18px 0 12px;
+  overflow: hidden;
 }
-.gauge span {
-  display: block;
+.gauge::-webkit-progress-bar {
+  background: var(--paper);
+}
+.gauge::-webkit-progress-value {
   background: var(--moss);
-  height: 100%;
-  transition: width 180ms ease;
+  transition: inline-size 180ms ease;
 }
-.low .gauge span {
+.gauge::-moz-progress-bar {
+  background: var(--moss);
+  transition: inline-size 180ms ease;
+}
+.low .gauge::-webkit-progress-value {
   background: var(--sun);
 }
-.empty .gauge span {
+.low .gauge::-moz-progress-bar {
+  background: var(--sun);
+}
+.empty .gauge::-webkit-progress-value {
+  background: var(--coral);
+}
+.empty .gauge::-moz-progress-bar {
   background: var(--coral);
 }
 .small {
@@ -666,10 +682,15 @@ footer p {
     background: #173229;
     color: #fff;
   }
-  .device-card {
+  .eyebrow {
+    color: #a9d8b8;
+  }
+  .device-card.low,
+  .device-card.empty {
     color: #102821;
   }
-  .device-card .quiet {
+  .device-card.low .quiet,
+  .device-card.empty .quiet {
     color: #102821;
   }
   .outline {

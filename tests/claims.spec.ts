@@ -74,15 +74,22 @@ test("keyboard users can add a device", async ({ page }) => {
   await expect(page.getByText("Pocket inhaler")).toBeVisible();
 });
 
-test("has no serious or critical accessibility findings", async ({ page }) => {
-  await page.goto("/demo");
-  await page.addScriptTag({ content: axe.source });
-  const result = await page.evaluate(async () =>
-    (window as typeof window & { axe: typeof axe }).axe.run(),
-  );
-  expect(
-    result.violations.filter((v) =>
-      ["serious", "critical"].includes(v.impact ?? ""),
-    ),
-  ).toEqual([]);
+test("has no serious or critical accessibility findings", async ({
+  browser,
+}) => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    const context = await browser.newContext({ bypassCSP: true, colorScheme });
+    const page = await context.newPage();
+    await page.goto("/demo");
+    await page.addScriptTag({ content: axe.source });
+    const result = await page.evaluate(async () =>
+      (window as typeof window & { axe: typeof axe }).axe.run(),
+    );
+    expect(
+      result.violations.filter((v) =>
+        ["serious", "critical"].includes(v.impact ?? ""),
+      ),
+    ).toEqual([]);
+    await context.close();
+  }
 });
