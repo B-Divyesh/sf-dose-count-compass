@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://dose-count-compass.sociobot.in/sitemap.xml
