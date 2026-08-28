@@ -1,59 +1,51 @@
-# Repair handoff — Dose Count Compass
+# Review 2 handoff — Dose Count Compass
 
 ## Result
 
-All F-1-1 through F-1-12 findings in `.factory/review-1.md` are repaired in
-`af36a72fa1584e802d1893add329b3c61a11ca42`. The finding-by-finding map is in
-`.factory/polish-1.md`.
+Adversarial first-read review 2 is complete. The verdict is **FAIL** with ten
+findings in `.factory/review-2.md`: five blocking, one major, and four minor.
+No product source was changed.
 
-## What changed
+## What was reviewed
 
-- Rewrote the first-screen, privacy, and README copy in plain language.
-- Expanded `.factory/claims.json` to seven executable claims and strengthened
-  real-mode local storage plus offline write/reload proof.
-- Made SPA routes update focus, polite announcements, canonical URLs, and
-  social metadata. The 404 now uses the shared navigation and legal footer.
-- Preserved the paper-cut medicine-cabinet visual system and PWA deployment
-  class. Service-worker cache name advanced to `dose-compass-v4`.
+- Cold live first reads at 390 × 844 and 1440 × 900.
+- One-click demo, Reset, Start for real, real/demo IndexedDB separation,
+  browser Back, offline write/reload, and same-origin traffic.
+- Every landing and README sentence, term, heading, and landing action.
+- Every exact command in `.factory/claims.json` from a clean clone.
+- Titles, metadata, link crawl, deep routes, 404, service-worker behavior,
+  focus/announcement, axe results, touch targets, reflow, visual identity, and
+  asset/security basics.
+- Every finding in `.factory/review-1.md` plus earlier verification defects,
+  the polish record, and the prior handoff.
 
-## Exact local evidence
+## Verification evidence
 
-- `npm ci` — pass, 20 packages, 0 vulnerabilities.
-- `npm run lint` — pass (`tsc --noEmit`).
-- `npm run build` — pass; `dist/` produced. Initial assets: 19.14 KB JS
-  (7.03 KB gzip) and 10.51 KB CSS (3.22 KB gzip).
-- `npm test` — pass, 19/19 Playwright tests, including axe serious/critical
-  sweeps in light and dark across every app route and the 404.
-- A fresh clone at `/tmp/tmp.uj9VTtVxac` also passed `npm ci`, lint, build,
-  the complete 19-test browser suite, and all seven exact claim commands.
-- Each exact claim command passed: `offline-reload`, `csv-export`,
-  `json-export`, `print-card`, `local-only`, `log-updates-count`, and
-  `demo-isolation`.
-- `/opt/fleet/lib/verify-url.sh http://127.0.0.1:4173/demo
-  .factory/evidence/local` — pass: HTTP 200, 539 ms, no page/console errors,
-  title/lang/one-h1/main/alt/button-name checks pass. Screenshots are
-  `.factory/evidence/local/screenshot-desktop.png` and
-  `.factory/evidence/local/screenshot-mobile.png`.
-- The Playwright axe integration is the accessibility verifier. The standalone
-  `@axe-core/cli` could not start Chrome in this container; it was not used as
-  passing evidence.
+Clean clone: `/tmp/dcc-review-2.sGVSxp`
 
-## Run and deploy
-
-```sh
-npm ci
-npm run lint
-npm run build
-npm test
+```text
+npm ci                                      PASS; 20 packages, 0 vulnerabilities
+npm run lint                                PASS
+npm run build                               PASS; dist/ produced
+npm test                                    PASS; 19/19
+npm audit --audit-level=high                PASS; 0 vulnerabilities
+all 7 exact @claim commands                 PASS; 1 test each
+live verify-url.sh                          PASS; title/lang/h1/main/alt/errors
+live axe serious/critical route sweep       PASS; 0 on 6 routes
 ```
 
-Static output is `dist/` with `index.html` at its root. Push `main` to deploy
-through the factory static work order. Then cold-check
-`https://dose-count-compass.sociobot.in/demo` and `/?demo=1`.
+Build sizes were 19.14 KB JS (7.03 KB gzip) and 10.51 KB CSS (3.22 KB gzip).
+Live assets matched those names and used immutable caching.
 
-## Known gaps
+## Items left
 
-None in the repaired source. Repair commit
-`f7f7d47fa53cf5304e47b763f2ef15c10291e5ed` is pushed; the public endpoint was still
-serving its prior asset hash (`index-C9MPsU1J.js`) during the work order, so
-the required cold live recheck awaits the factory static deployment.
+- Demo changes persist after **Start for real**.
+- Core count, hero demo-result, and refill-threshold public claims are not
+  fully represented by tagged claim entries/tests.
+- The service-worker-controlled 404 is HTTP 200, loses its CSS offline, logs a
+  console error, and lacks required route metadata.
+- Dashboard device headings skip h2.
+- File-format and threshold jargon, one vague heading, and the absent
+  price/free fact remain.
+
+See `.factory/review-2.md` for exact quotes, evidence, and concrete fixes.
