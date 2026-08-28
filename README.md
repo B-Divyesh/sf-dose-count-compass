@@ -2,10 +2,12 @@
 
 Count doses in inhalers, sprays, injectables, and other medicine devices before
 they run out. It is for people who track doses but do not need a full medicine
-app.
+app. It is free to use.
 
-Saved in your browser. It works offline after the first visit. Export a JSON
-backup or dose-log CSV. Print an inventory card. Try sample data at `/demo`.
+Saved in your browser. It works offline after the first visit. Download a
+backup file or dose-history spreadsheet. Import a backup with confirmation and
+Undo. Print an inventory card. Try three separate sample devices at
+`/?demo=1`.
 
 ## Run
 
@@ -23,6 +25,10 @@ npm run build
 
 The static deploy output is `dist/`, with `index.html` at its root. Preview it
 with `npm run preview`.
+
+## File formats
+
+Backup files use `.json`. Dose-history spreadsheet files use `.csv`.
 
 ## Safety and privacy
 

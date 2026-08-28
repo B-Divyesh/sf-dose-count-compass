@@ -1,1 +1,1 @@
-Count medicine doses before a device runs out, with a private browser-based log.
+Count medicine-device doses offline and get a refill reminder before the device runs out.

@@ -20,11 +20,11 @@ test("@claim:offline-reload Works offline after the first visit", async ({
   await context.setOffline(false);
 });
 
-test("@claim:csv-export Exports the log as CSV", async ({ page }) => {
+test("@claim:csv-export Downloads dose history as a spreadsheet file", async ({ page }) => {
   await page.goto("/demo");
   await page.getByRole("button", { name: "Log 1 puff" }).click();
   const download = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export CSV" }).click();
+  await page.getByRole("button", { name: "Download dose history" }).click();
   const file = await download;
   const csv = await readFile((await file.path())!, "utf8");
   expect(csv).toContain("record_type,device_id,device,type,total,remaining,threshold,updated,event_at,dose_amount");
@@ -33,10 +33,10 @@ test("@claim:csv-export Exports the log as CSV", async ({ page }) => {
   expect(csv).toContain("Blue rescue inhaler");
 });
 
-test("@claim:json-export Exports a JSON backup", async ({ page }) => {
+test("@claim:json-export Downloads a backup file", async ({ page }) => {
   await page.goto("/demo");
   const download = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export backup" }).click();
+  await page.getByRole("button", { name: "Download backup file" }).click();
   const file = await download;
   expect(
     JSON.parse(await readFile((await file.path())!, "utf8")).devices,
@@ -56,28 +56,43 @@ test("@claim:print-card Opens a printable inventory card", async ({ page }) => {
   await expect(card.getByText("Travel injector")).toBeVisible();
 });
 
-test("@claim:demo-isolation Demo never displays or writes real inventory", async ({ page }) => {
+test("@claim:demo-isolation One-click demo stays separate and resets when leaving", async ({ page }) => {
   await page.goto("/log");
   await page.getByRole("button", { name: "Add a device" }).click();
   await page.getByLabel("Name").fill("Private real inhaler");
   await page.getByLabel("Total doses").fill("100");
   await page.getByLabel("Doses left").fill("100");
-  await page.getByLabel("Refill threshold").fill("20");
+  await page.getByLabel("Refill reminder count").fill("20");
   await page.getByRole("button", { name: "Save device" }).click();
-  await page.getByRole("link", { name: "Demo" }).click();
+  await page.getByRole("link", { name: "Dose Count Compass home" }).click();
+  await page.getByRole("link", { name: "Try it with sample data" }).click();
+  await expect(page.getByText("Demo — sample data, nothing is saved")).toBeVisible();
   await expect(page.getByText("Blue rescue inhaler")).toBeVisible();
+  await expect(page.getByText("Saline spray")).toBeVisible();
+  await expect(page.getByText("Travel injector")).toBeVisible();
   await expect(page.getByText("Private real inhaler")).toHaveCount(0);
-  await page.getByRole("link", { name: "My devices" }).click();
+  await page.getByRole("button", { name: "Log 1 puff" }).click();
+  await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText("41");
+  await page.getByRole("button", { name: "Start for real" }).click();
   await expect(page.getByText("Private real inhaler")).toBeVisible();
-  await page.goBack();
+  await page.goto("/?demo=1");
   await expect(page).toHaveURL(/\/demo$/);
   await expect(page.getByText("Blue rescue inhaler")).toBeVisible();
   await expect(page.getByText("Private real inhaler")).toHaveCount(0);
-  await page.getByRole("button", { name: "Log 1 puff" }).click();
-  const download = page.waitForEvent("download");
-  await page.getByRole("button", { name: "Export backup" }).click();
-  const backup = JSON.parse(await readFile((await (await download).path())!, "utf8"));
-  expect(backup.devices.map((device: { name: string }) => device.name)).not.toContain("Private real inhaler");
+  await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText("42");
+  expect(await page.evaluate(async () => {
+    const read = (name: string) => new Promise<Array<{ name: string; remaining: number }>>((resolve, reject) => {
+      const request = indexedDB.open(name);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        const get = request.result.transaction("state").objectStore("state").get("devices");
+        get.onerror = () => reject(get.error);
+        get.onsuccess = () => resolve(get.result);
+      };
+    });
+    const [real, sampleData] = await Promise.all([read("real:dose-count-compass"), read("demo:dose-count-compass")]);
+    return { real: real.map((device) => device.name), blue: sampleData.find((device) => device.name === "Blue rescue inhaler")?.remaining };
+  })).toEqual({ real: ["Private real inhaler"], blue: 42 });
 });
 
 test("@claim:local-only Real records stay in browser storage with no cross-origin requests", async ({
@@ -93,7 +108,7 @@ test("@claim:local-only Real records stay in browser storage with no cross-origi
   await page.getByLabel("Name").fill("Browser-only inhaler");
   await page.getByLabel("Total doses").fill("60");
   await page.getByLabel("Doses left").fill("60");
-  await page.getByLabel("Refill threshold").fill("12");
+  await page.getByLabel("Refill reminder count").fill("12");
   await page.getByRole("button", { name: "Save device" }).click();
   await expect(page.getByText("Browser-only inhaler")).toBeVisible();
   await page.reload();
@@ -110,11 +125,15 @@ test("@claim:local-only Real records stay in browser storage with no cross-origi
   expect(crossOrigin).toEqual([]);
 });
 
-test("@claim:log-updates-count Logging a use changes the visible count and stored log", async ({ page }) => {
+test("@claim:log-updates-count Repeated logs count a device down to zero", async ({ page }) => {
   await page.goto("/demo");
   await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText("42");
-  await page.getByRole("button", { name: "Log 1 puff" }).click();
-  await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText("41");
+  for (let remaining = 41; remaining >= 0; remaining--) {
+    await page.locator('[data-device="sample-blue"] [data-action="dose"]').click();
+    await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText(String(remaining));
+  }
+  await expect(page.locator('[data-device="sample-blue"] [data-action="dose"]')).toBeDisabled();
+  await expect(page.locator('[data-device="sample-blue"] .status')).toHaveText("Empty — refill now");
   expect(await page.evaluate(async () => new Promise<boolean>((resolve, reject) => {
     const request = indexedDB.open("demo:dose-count-compass");
     request.onerror = () => reject(request.error);
@@ -123,10 +142,40 @@ test("@claim:log-updates-count Logging a use changes the visible count and store
       get.onerror = () => reject(get.error);
       get.onsuccess = () => {
         const blue = get.result.find((device: { id: string }) => device.id === "sample-blue");
-        resolve(blue?.remaining === 41 && blue.logs?.length === 3);
+        resolve(blue?.remaining === 0 && blue.logs?.length === 44);
       };
     };
   }))).toBe(true);
+});
+
+test("@claim:refill-reminder The refill reminder starts at the chosen count", async ({ page }) => {
+  await page.goto("/demo");
+  const card = page.locator('[data-device="sample-blue"]');
+  await expect(card.locator(".status")).toHaveText("Enough for now");
+  for (let index = 0; index < 12; index++) await card.locator('[data-action="dose"]').click();
+  await expect(card.locator(".count-row strong")).toHaveText("30");
+  await expect(card.locator(".status")).toHaveText("Refill reminder");
+  await card.locator('[data-action="dose"]').click();
+  await expect(card.locator(".count-row strong")).toHaveText("29");
+  await expect(card.locator(".status")).toHaveText("Refill reminder");
+});
+
+test("@claim:free-to-use Core use has no purchase gate", async ({ page }) => {
+  const billingRequests: string[] = [];
+  page.on("request", (request) => { if (/checkout|billing|license|payment/i.test(request.url())) billingRequests.push(request.url()); });
+  await page.goto("/");
+  await expect(page.getByText("Free to use")).toBeVisible();
+  await expect(page.getByText(/buy|price|paid|purchase/i)).toHaveCount(0);
+  await page.getByRole("link", { name: "My devices" }).click();
+  await page.getByRole("button", { name: "Add a device" }).click();
+  await page.getByLabel("Name").fill("Free-use inhaler");
+  await page.getByLabel("Total doses").fill("2");
+  await page.getByLabel("Doses left").fill("2");
+  await page.getByLabel("Refill reminder count").fill("1");
+  await page.getByRole("button", { name: "Save device" }).click();
+  await page.getByRole("button", { name: "Log 1 puff" }).click();
+  await expect(page.getByText("Free-use inhaler")).toBeVisible();
+  expect(billingRequests).toEqual([]);
 });
 
 test("keyboard users can add a device", async ({ page }) => {
@@ -138,20 +187,20 @@ test("keyboard users can add a device", async ({ page }) => {
   await page.getByLabel("Name").fill("Pocket inhaler");
   await page.getByLabel("Total doses").fill("120");
   await page.getByLabel("Doses left").fill("120");
-  await page.getByLabel("Refill threshold").fill("20");
+  await page.getByLabel("Refill reminder count").fill("20");
   await page.getByRole("button", { name: "Save device" }).click();
   await expect(page.getByText("Pocket inhaler")).toBeVisible();
 });
 
-test("refill threshold cannot exceed a device total", async ({ page }) => {
+test("refill reminder cannot exceed a device total", async ({ page }) => {
   await page.goto("/log");
   await page.getByRole("button", { name: "Add a device" }).click();
   await page.getByLabel("Name").fill("Boundary device");
   await page.getByLabel("Total doses").fill("2");
   await page.getByLabel("Doses left").fill("2");
-  await page.getByLabel("Refill threshold").fill("999");
+  await page.getByLabel("Refill reminder count").fill("999");
   await page.getByRole("button", { name: "Save device" }).click();
-  await expect(page.getByText("refill threshold no higher than total")).toBeVisible();
+  await expect(page.getByText("refill reminder no higher than total")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Add a device" })).toBeVisible();
 });
 
@@ -183,15 +232,25 @@ test("route navigation updates focus, announcement, canonical, and social metada
   await expect(page.locator(".route-announcer")).toHaveText("Now viewing: Three devices, counted for you");
 });
 
-test("invalid import is rejected and valid import needs confirmation with undo", async ({ page }) => {
+test("dashboard heading outlines are sequential when empty and populated", async ({ page }) => {
+  for (const path of ["/log", "/demo"]) {
+    await page.goto(path);
+    const levels = await page.locator("main h1, main h2, main h3, main h4, main h5, main h6").evaluateAll((headings) => headings.map((heading) => Number(heading.tagName.slice(1))));
+    expect(levels[0]).toBe(1);
+    for (let index = 1; index < levels.length; index++) expect(levels[index]).toBeLessThanOrEqual(levels[index - 1] + 1);
+    await expect(page.getByRole("heading", { name: "Tracked devices", level: 2 })).toBeVisible();
+  }
+});
+
+test("@claim:backup-import Import validates, confirms replacement, and supports Undo", async ({ page }) => {
   await page.goto("/log");
   await page.getByRole("button", { name: "Add a device" }).click();
   await page.getByLabel("Name").fill("Keep me");
   await page.getByLabel("Total doses").fill("10");
   await page.getByLabel("Doses left").fill("10");
-  await page.getByLabel("Refill threshold").fill("2");
+  await page.getByLabel("Refill reminder count").fill("2");
   await page.getByRole("button", { name: "Save device" }).click();
-  const importer = page.getByLabel("Import backup");
+  const importer = page.getByLabel("Import backup file");
   await importer.setInputFiles({ name: "invalid.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify({ version: 1, devices: [{ total: 0, remaining: -5, threshold: -10, logs: "not-a-list" }] })) });
   await expect(page.getByRole("heading", { name: "Replace this device list?" })).toHaveCount(0);
   await expect(page.getByText("Keep me")).toBeVisible();
@@ -224,7 +283,7 @@ test("keyboard order, dialog return focus, file focus, and 200% reflow are usabl
   await page.getByRole("button", { name: "Add a device" }).click();
   await page.keyboard.press("Escape");
   await expect(page.getByRole("button", { name: "Add a device" })).toBeFocused();
-  const importer = page.getByLabel("Import backup");
+  const importer = page.getByLabel("Import backup file");
   await importer.focus();
   await expect(page.locator(".file-label")).toHaveCSS("outline-style", "solid");
   await page.evaluate(() => { document.documentElement.style.fontSize = "200%"; });

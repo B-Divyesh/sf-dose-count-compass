@@ -472,10 +472,15 @@ figcaption {
   border: 2px dashed var(--ink);
   padding: 60px 24px;
 }
-.empty h2 {
+.empty h3 {
   font:
     2rem Georgia,
     serif;
+}
+.device-grid-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  font: 1.7rem/1.1 Georgia, serif;
 }
 .empty p {
   max-width: 460px;

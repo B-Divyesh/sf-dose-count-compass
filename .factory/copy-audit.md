@@ -1,30 +1,46 @@
 # Landing copy audit
 
-| Sentence | Words | Result |
-| --- | ---: | --- |
-| Count doses before you run out | 7 | pass |
-| For people who track doses but do not need a full medicine app. | 12 | pass |
-| See three devices already counted. | 5 | pass |
-| Saved in your browser | 4 | listed claim |
-| Works offline after first visit | 5 | pass |
-| Export a JSON backup | 5 | listed claim |
-| See the count, then take the next step | 9 | pass |
-| Enter the count printed on it. | 6 | pass |
-| Update the count. | 3 | listed claim |
-| Refill before the count reaches zero. | 6 | pass |
-| It does not replace the device indicator, prescription label, pharmacist, or clinician. | 13 | pass |
-| Check expiry dates separately. | 4 | pass |
-| Saved in your browser. | 4 | listed claim |
+Words are counted as whitespace-separated words. Labels and headings are
+included because a visitor can rely on them. No line exceeds 22 words, and no
+banned marketing term appears.
 
-No sentence exceeds 22 words. No banned terms appear.
+| Copy | Words | Result |
+| --- | ---: | --- |
+| Online | 1 | factual connection state |
+| Count doses before you run out | 6 | `log-updates-count` |
+| For people who track doses but do not need a full medicine app. | 13 | pass |
+| Try it with sample data | 5 | `demo-isolation` |
+| See three devices already counted. | 5 | `demo-isolation` |
+| Saved in your browser | 4 | `local-only` |
+| Works offline after first visit | 5 | `offline-reload` |
+| Free to use | 3 | `free-to-use` |
+| Original paper-cut illustration. | 3 | provenance in `.factory/design.md` |
+| It does not show a real medicine. | 7 | pass |
+| Check doses left and refill status | 6 | `log-updates-count`, `refill-reminder` |
+| Download a backup file or dose-history spreadsheet from your device list. | 11 | `json-export`, `csv-export` |
+| Enough for now | 3 | `refill-reminder` |
+| A refill reminder starts at 30 puffs. | 7 | `refill-reminder` |
+| Add a device. | 3 | tested by `local-only` and `free-to-use` |
+| Enter the count printed on it. | 6 | pass |
+| Log each use. | 3 | `log-updates-count` |
+| Update the count. | 3 | `log-updates-count` |
+| Plan a refill at your chosen count. | 7 | `refill-reminder` |
+| The card shows a refill reminder before zero. | 8 | `refill-reminder` |
+| It does not replace the device indicator, prescription label, pharmacist, or clinician. | 12 | pass |
+| Check expiry dates separately. | 4 | pass |
+| Saved in your browser. | 4 | `local-only` |
+| Count doses before a device runs out. | 7 | `log-updates-count` |
 
 ## Terminology
 
-| Concept | Word used |
+| Concept | One term used in visitor copy |
 | --- | --- |
 | Physical medicine container | device |
-| Count remaining | doses left |
-| A single inhaler use | puff |
-| A single nasal use | spray |
-| Low-count prompt | refill threshold |
-| Example data mode | demo |
+| Remaining quantity | doses left |
+| Low-count prompt | refill reminder |
+| Full data copy | backup file |
+| Dose-event download | dose-history spreadsheet |
+| Example mode | demo / sample data |
+
+`JSON`, `CSV`, `IndexedDB`, and `threshold` remain only in implementation,
+tests, historical reviews, or the README file-format section for developers.
