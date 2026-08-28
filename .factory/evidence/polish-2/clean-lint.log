@@ -1,0 +1,4 @@
+
+> dose-count-compass@1.2.0 lint
+> tsc --noEmit
+
