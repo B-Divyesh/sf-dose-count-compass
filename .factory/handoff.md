@@ -73,7 +73,22 @@ Deployment target: static PWA at
 /opt/fleet/lib/deploy-static.sh dose-count-compass dist
 ```
 
-Post-deploy verification will be recorded here after upload.
+Deployment completed successfully with Azure Static Web Apps deployment ID
+`3197775b-0c65-4062-afb3-a6c362971941`. The custom domain remained ready and
+returned HTTPS 200.
+
+- `/opt/fleet/lib/verify-url.sh https://dose-count-compass.sociobot.in/ ...`:
+  pass; load 910 ms; zero console errors; title, language, landmark, heading,
+  image-alt, and button-name checks all pass.
+- Fresh Chromium on live `/demo`: HTTP 200; title `Demo — Dose Count Compass`;
+  three `progress.gauge` elements; zero `[style]` or `<style>` nodes; zero page
+  or CSP console errors after dose, edit, cancel, and print actions.
+- The live response keeps `style-src 'self'` with no relaxation. The print
+  window has zero inline styles and loads only
+  `https://dose-count-compass.sociobot.in/print.css`.
+- Live identity/assets: custom hostname is correct; JS is
+  `index-CTqnuuSi.js`; CSS is `index-DzZ7wf_z.css`; and `sw.js` contains
+  `dose-compass-v2` plus `/print.css`.
 
 ## Known gaps
 
