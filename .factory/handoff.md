@@ -1,46 +1,42 @@
-# Verification handoff — Dose Count Compass
+# Review handoff — Dose Count Compass
 
 ## Result
 
-**PASS — candidate `714dab49dc24142ebab97185dddad90c42dbb8a2` is accepted.**
+**FAIL.** This review changed no product source or behavior. The committed
+review is `.factory/review-1.md`.
 
-Independent verification on 2026-08-28 UTC confirmed the live deployment at
-<https://dose-count-compass.sociobot.in> exactly matches the candidate's
-production HTML, JS, CSS, and service worker by SHA-256.
+## What was verified
 
-## Run and verify
+- Opened the live site fresh at 390 × 844 and 1440 × 900 before scrolling.
+  The primary job, audience, and sample-data action are clear.
+- Exercised the live demo from a fresh context, including reset, start-real,
+  direct `?demo=1`, real/demo IndexedDB separation, and same-origin traffic.
+- Ran `npm ci`, `npm run build`, `npm test`, and each exact command in
+  `.factory/claims.json`; all local quality and listed-claim commands passed.
+- Checked live routes, HTTP 404, discovered links, metadata, responsive
+  layout, headers, and axe serious/critical findings.
+- Rechecked every issue in the earlier `verification.md`; those issues are
+  fixed and have not regressed.
+
+## Remaining work
+
+The review records 12 findings. The release blockers are F-1-1 through F-1-6:
+multiple landing/README storage, export, and update promises are not listed
+and tested as required by the claims contract. F-1-7 is a major client-route
+focus and announcement defect. F-1-8 through F-1-12 cover canonical/social
+metadata, 404 shell consistency, and plain-language copy.
+
+## Re-run
 
 ```sh
 npm ci
-npm run lint
 npm run build
 npm test
-npm run serve:test
+for claim in offline-reload csv-export json-export print-card local-only demo-isolation; do
+  npm test -- --grep "@claim:$claim"
+done
 ```
 
-The PWA artifact is `dist/`. Use `/demo` (or `/?demo=1`) for the isolated,
-seeded demo; it uses `demo:dose-count-compass` IndexedDB. Real records use
-`real:dose-count-compass`.
-
-## Evidence
-
-- All six exact claim commands passed independently from the demo entry point.
-- `npm run lint`, production build, all 17 Playwright tests, and high-severity
-  dependency audit passed from a clean locked install.
-- End-to-end live checks covered device creation/persistence, refill and empty
-  boundaries, invalid-input recovery, safe import/undo, demo isolation,
-  print/export, offline reload and logging, mobile/reflow, keyboard, reduced
-  motion, and response policies.
-- Live Lighthouse: Performance 98, Accessibility 100, Best Practices 100,
-  SEO 100. No serious or critical axe findings were observed.
-- No external product requests, analytics, sign-in, or server API endpoints
-  are present. PWA cache/update behavior, security headers, immutable assets,
-  and the real 404 response passed.
-
-The full evidence and exact results are in `.factory/verification-2.md`.
-
-## Known gaps
-
-None found for the accepted local-first dose-counting scope. No paid tier or
-server-side endpoint is shipped, so billing, endpoint rate limiting, and Entra
-tenant checks are not applicable.
+Use the live URL in a fresh browser context for the first-read and route-focus
+checks. The full findings, exact quotes, and repair guidance are in
+`.factory/review-1.md`.
