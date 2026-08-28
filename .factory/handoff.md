@@ -1,42 +1,55 @@
-# Review handoff — Dose Count Compass
+# Repair handoff — Dose Count Compass
 
 ## Result
 
-**FAIL.** This review changed no product source or behavior. The committed
-review is `.factory/review-1.md`.
+All F-1-1 through F-1-12 findings in `.factory/review-1.md` are repaired in
+`af36a72fa1584e802d1893add329b3c61a11ca42`. The finding-by-finding map is in
+`.factory/polish-1.md`.
 
-## What was verified
+## What changed
 
-- Opened the live site fresh at 390 × 844 and 1440 × 900 before scrolling.
-  The primary job, audience, and sample-data action are clear.
-- Exercised the live demo from a fresh context, including reset, start-real,
-  direct `?demo=1`, real/demo IndexedDB separation, and same-origin traffic.
-- Ran `npm ci`, `npm run build`, `npm test`, and each exact command in
-  `.factory/claims.json`; all local quality and listed-claim commands passed.
-- Checked live routes, HTTP 404, discovered links, metadata, responsive
-  layout, headers, and axe serious/critical findings.
-- Rechecked every issue in the earlier `verification.md`; those issues are
-  fixed and have not regressed.
+- Rewrote the first-screen, privacy, and README copy in plain language.
+- Expanded `.factory/claims.json` to seven executable claims and strengthened
+  real-mode local storage plus offline write/reload proof.
+- Made SPA routes update focus, polite announcements, canonical URLs, and
+  social metadata. The 404 now uses the shared navigation and legal footer.
+- Preserved the paper-cut medicine-cabinet visual system and PWA deployment
+  class. Service-worker cache name advanced to `dose-compass-v4`.
 
-## Remaining work
+## Exact local evidence
 
-The review records 12 findings. The release blockers are F-1-1 through F-1-6:
-multiple landing/README storage, export, and update promises are not listed
-and tested as required by the claims contract. F-1-7 is a major client-route
-focus and announcement defect. F-1-8 through F-1-12 cover canonical/social
-metadata, 404 shell consistency, and plain-language copy.
+- `npm ci` — pass, 20 packages, 0 vulnerabilities.
+- `npm run lint` — pass (`tsc --noEmit`).
+- `npm run build` — pass; `dist/` produced. Initial assets: 19.14 KB JS
+  (7.03 KB gzip) and 10.51 KB CSS (3.22 KB gzip).
+- `npm test` — pass, 19/19 Playwright tests, including axe serious/critical
+  sweeps in light and dark across every app route and the 404.
+- Each exact claim command passed: `offline-reload`, `csv-export`,
+  `json-export`, `print-card`, `local-only`, `log-updates-count`, and
+  `demo-isolation`.
+- `/opt/fleet/lib/verify-url.sh http://127.0.0.1:4173/demo
+  .factory/evidence/local` — pass: HTTP 200, 539 ms, no page/console errors,
+  title/lang/one-h1/main/alt/button-name checks pass. Screenshots are
+  `.factory/evidence/local/screenshot-desktop.png` and
+  `.factory/evidence/local/screenshot-mobile.png`.
+- The Playwright axe integration is the accessibility verifier. The standalone
+  `@axe-core/cli` could not start Chrome in this container; it was not used as
+  passing evidence.
 
-## Re-run
+## Run and deploy
 
 ```sh
 npm ci
+npm run lint
 npm run build
 npm test
-for claim in offline-reload csv-export json-export print-card local-only demo-isolation; do
-  npm test -- --grep "@claim:$claim"
-done
 ```
 
-Use the live URL in a fresh browser context for the first-read and route-focus
-checks. The full findings, exact quotes, and repair guidance are in
-`.factory/review-1.md`.
+Static output is `dist/` with `index.html` at its root. Push `main` to deploy
+through the factory static work order. Then cold-check
+`https://dose-count-compass.sociobot.in/demo` and `/?demo=1`.
+
+## Known gaps
+
+None in the repaired source. Live deployment verification is recorded after
+the static deployment completes.
