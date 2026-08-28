@@ -1,0 +1,1 @@
+Count medicine doses before a device runs out, with a private browser-based log.

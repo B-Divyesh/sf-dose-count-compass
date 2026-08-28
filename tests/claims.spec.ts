@@ -10,10 +10,13 @@ test("@claim:offline-reload Works offline after the first visit", async ({
   await page.waitForFunction(() => navigator.serviceWorker.ready);
   await page.reload();
   await context.setOffline(true);
+  await page.getByRole("button", { name: "Log 1 puff" }).click();
+  await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText("41");
   await page.reload();
   await expect(
     page.getByRole("heading", { name: "Three devices, counted for you" }),
   ).toBeVisible();
+  await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText("41");
   await context.setOffline(false);
 });
 
@@ -77,7 +80,7 @@ test("@claim:demo-isolation Demo never displays or writes real inventory", async
   expect(backup.devices.map((device: { name: string }) => device.name)).not.toContain("Private real inhaler");
 });
 
-test("@claim:local-only Demo tracking makes no cross-origin requests", async ({
+test("@claim:local-only Real records stay in browser storage with no cross-origin requests", async ({
   page,
 }) => {
   const crossOrigin: string[] = [];
@@ -85,9 +88,45 @@ test("@claim:local-only Demo tracking makes no cross-origin requests", async ({
     if (!request.url().startsWith("http://127.0.0.1:4173"))
       crossOrigin.push(request.url());
   });
-  await page.goto("/demo");
-  await page.getByRole("button", { name: "Log 1 puff" }).click();
+  await page.goto("/log");
+  await page.getByRole("button", { name: "Add a device" }).click();
+  await page.getByLabel("Name").fill("Browser-only inhaler");
+  await page.getByLabel("Total doses").fill("60");
+  await page.getByLabel("Doses left").fill("60");
+  await page.getByLabel("Refill threshold").fill("12");
+  await page.getByRole("button", { name: "Save device" }).click();
+  await expect(page.getByText("Browser-only inhaler")).toBeVisible();
+  await page.reload();
+  await expect(page.getByText("Browser-only inhaler")).toBeVisible();
+  expect(await page.evaluate(async () => new Promise<boolean>((resolve, reject) => {
+    const request = indexedDB.open("real:dose-count-compass");
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      const get = request.result.transaction("state").objectStore("state").get("devices");
+      get.onerror = () => reject(get.error);
+      get.onsuccess = () => resolve(Array.isArray(get.result) && get.result.some((device: { name: string }) => device.name === "Browser-only inhaler"));
+    };
+  }))).toBe(true);
   expect(crossOrigin).toEqual([]);
+});
+
+test("@claim:log-updates-count Logging a use changes the visible count and stored log", async ({ page }) => {
+  await page.goto("/demo");
+  await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText("42");
+  await page.getByRole("button", { name: "Log 1 puff" }).click();
+  await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText("41");
+  expect(await page.evaluate(async () => new Promise<boolean>((resolve, reject) => {
+    const request = indexedDB.open("demo:dose-count-compass");
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      const get = request.result.transaction("state").objectStore("state").get("devices");
+      get.onerror = () => reject(get.error);
+      get.onsuccess = () => {
+        const blue = get.result.find((device: { id: string }) => device.id === "sample-blue");
+        resolve(blue?.remaining === 41 && blue.logs?.length === 3);
+      };
+    };
+  }))).toBe(true);
 });
 
 test("keyboard users can add a device", async ({ page }) => {
@@ -127,6 +166,21 @@ test("direct demo query enters the seeded dashboard", async ({ page }) => {
   await expect(page).toHaveURL(/\/demo$/);
   await expect(page.getByRole("heading", { name: "Three devices, counted for you" })).toBeVisible();
   await expect(page.getByText("Blue rescue inhaler")).toBeVisible();
+});
+
+test("route navigation updates focus, announcement, canonical, and social metadata", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Demo" }).click();
+  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page.getByRole("heading", { name: "Three devices, counted for you" })).toBeFocused();
+  await expect(page.locator(".route-announcer")).toHaveText("Now viewing: Three devices, counted for you");
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://dose-count-compass.sociobot.in/demo");
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", "https://dose-count-compass.sociobot.in/demo");
+  await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute("content", "Demo — Dose Count Compass");
+  await page.getByRole("link", { name: "My devices" }).click();
+  await page.goBack();
+  await expect(page.getByRole("heading", { name: "Three devices, counted for you" })).toBeFocused();
+  await expect(page.locator(".route-announcer")).toHaveText("Now viewing: Three devices, counted for you");
 });
 
 test("invalid import is rejected and valid import needs confirmation with undo", async ({ page }) => {

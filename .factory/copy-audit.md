@@ -3,20 +3,20 @@
 | Sentence | Words | Result |
 | --- | ---: | --- |
 | Count doses before you run out | 7 | pass |
-| For people tracking inhalers, sprays, injectables, and other medicine devices without a medication-management account. | 14 | pass |
+| For people who track doses but do not need a full medicine app. | 12 | pass |
 | See three devices already counted. | 5 | pass |
-| Saved on this device | 5 | pass |
+| Saved in your browser | 4 | listed claim |
 | Works offline after first visit | 5 | pass |
-| Export a backup any time | 5 | pass |
+| Export a JSON backup | 5 | listed claim |
 | See the count, then take the next step | 9 | pass |
 | Enter the count printed on it. | 6 | pass |
-| The remaining count changes at once. | 6 | pass |
+| Update the count. | 3 | listed claim |
 | Refill before the count reaches zero. | 6 | pass |
 | It does not replace the device indicator, prescription label, pharmacist, or clinician. | 13 | pass |
 | Check expiry dates separately. | 4 | pass |
-| Your devices stay on this device unless you export them. | 10 | pass |
+| Saved in your browser. | 4 | listed claim |
 
-No banned terms appear.
+No sentence exceeds 22 words. No banned terms appear.
 
 ## Terminology
 

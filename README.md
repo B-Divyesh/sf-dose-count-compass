@@ -1,12 +1,11 @@
 # Dose Count Compass
 
 Count doses in inhalers, sprays, injectables, and other medicine devices before
-they run out. It is for people who want a small private inventory, not a full
-medication-management account.
+they run out. It is for people who track doses but do not need a full medicine
+app.
 
-The app stores records in browser IndexedDB. It works offline after the first
-visit, exports JSON backups and dose-log CSV files, prints an inventory card,
-and includes an isolated sample-data demo at `/demo`.
+Saved in your browser. It works offline after the first visit. Export a JSON
+backup or dose-log CSV. Print an inventory card. Try sample data at `/demo`.
 
 ## Run
 
@@ -28,6 +27,5 @@ with `npm run preview`.
 ## Safety and privacy
 
 Use the count alongside the physical device indicator, prescription label, and
-pharmacist or clinician instructions. This is not medical advice. Device data
-stays in the browser unless you choose to export it. See `/privacy` and
-`/terms`.
+pharmacist or clinician instructions. This is not medical advice. Saved in
+your browser. See `/privacy` and `/terms`.

@@ -1,8 +1,9 @@
 [
-  {"id":"offline-reload","claim":"Works offline after the first visit","where":"landing hero, README","test":"npm test -- --grep @claim:offline-reload","sandbox":"fresh browser context; visit /demo once, then reload offline"},
+  {"id":"offline-reload","claim":"Works offline after the first visit","where":"landing hero, README","test":"npm test -- --grep @claim:offline-reload","sandbox":"fresh browser context; visit /demo once, log a dose offline, reload offline, and inspect the saved count"},
   {"id":"csv-export","claim":"Exports the log as CSV","where":"My devices data tools, README","test":"npm test -- --grep @claim:csv-export","sandbox":"fresh browser context at /demo; download and inspect the CSV"},
-  {"id":"json-export","claim":"Exports a JSON backup","where":"My devices data tools, README","test":"npm test -- --grep @claim:json-export","sandbox":"fresh browser context at /demo; download and inspect the JSON"},
+  {"id":"json-export","claim":"Export a JSON backup","where":"landing hero, My devices data tools, README","test":"npm test -- --grep @claim:json-export","sandbox":"fresh browser context at /demo; download and inspect the JSON"},
   {"id":"print-card","claim":"Prints an inventory card","where":"My devices toolbar, README","test":"npm test -- --grep @claim:print-card","sandbox":"fresh browser context at /demo; open the printable card and inspect its inventory"},
-  {"id":"local-only","claim":"Saved on this device","where":"landing hero","test":"npm test -- --grep @claim:local-only","sandbox":"fresh browser context at /demo; observe every request while logging a dose"},
+  {"id":"local-only","claim":"Saved in your browser","where":"landing hero, landing privacy section, privacy page, README","test":"npm test -- --grep @claim:local-only","sandbox":"fresh browser context at /log; add a real device, reload, inspect IndexedDB, and assert only same-origin requests"},
+  {"id":"log-updates-count","claim":"Log each use. Update the count.","where":"landing how-it-works section","test":"npm test -- --grep @claim:log-updates-count","sandbox":"fresh browser context at /demo; log one sample dose and assert the visible count and stored log change"},
   {"id":"demo-isolation","claim":"Demo — sample data, nothing is saved","where":"demo banner, README","test":"npm test -- --grep @claim:demo-isolation","sandbox":"fresh browser context; add a real device, enter demo, use browser Back, and inspect a demo export"}
 ]
