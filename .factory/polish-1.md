@@ -4,7 +4,11 @@
 - Repair commit: `af36a72fa1584e802d1893add329b3c61a11ca42`
 - Local evidence: `.factory/evidence/local/screenshot-desktop.png` and
   `.factory/evidence/local/screenshot-mobile.png`
-- Live recheck: pending the static deployment triggered by the repair push.
+- Clean-clone evidence: `/tmp/tmp.uj9VTtVxac` passed the full suite and every
+  exact claim command after `npm ci`.
+- Live recheck: the pushed branch is awaiting the factory static deployment;
+  the endpoint still served the pre-repair `index-C9MPsU1J.js` asset during
+  this work order.
 
 | Finding | Change made | Evidence |
 | --- | --- | --- |

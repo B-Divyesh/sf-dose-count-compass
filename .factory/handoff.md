@@ -24,6 +24,8 @@ All F-1-1 through F-1-12 findings in `.factory/review-1.md` are repaired in
   (7.03 KB gzip) and 10.51 KB CSS (3.22 KB gzip).
 - `npm test` — pass, 19/19 Playwright tests, including axe serious/critical
   sweeps in light and dark across every app route and the 404.
+- A fresh clone at `/tmp/tmp.uj9VTtVxac` also passed `npm ci`, lint, build,
+  the complete 19-test browser suite, and all seven exact claim commands.
 - Each exact claim command passed: `offline-reload`, `csv-export`,
   `json-export`, `print-card`, `local-only`, `log-updates-count`, and
   `demo-isolation`.
@@ -51,5 +53,7 @@ through the factory static work order. Then cold-check
 
 ## Known gaps
 
-None in the repaired source. Live deployment verification is recorded after
-the static deployment completes.
+None in the repaired source. Repair commit
+`f7f7d47fa53cf5304e47b763f2ef15c10291e5ed` is pushed; the public endpoint was still
+serving its prior asset hash (`index-C9MPsU1J.js`) during the work order, so
+the required cold live recheck awaits the factory static deployment.
