@@ -1,0 +1,153 @@
+{
+  "firstScreen": {
+    "title": "Dose Count Compass — Count medicine doses",
+    "h1": "Count doses before you run out",
+    "lead": "For people who track doses but do not need a full medicine app.",
+    "action": {
+      "x": 16,
+      "y": 388.125,
+      "width": 241.671875,
+      "height": 44,
+      "top": 388.125,
+      "right": 257.671875,
+      "bottom": 432.125,
+      "left": 16
+    },
+    "facts": [
+      "Saved in your browser",
+      "Works offline after first visit",
+      "Free to use"
+    ],
+    "overflow": false,
+    "h1Count": 1
+  },
+  "demoIsolation": {
+    "queryNormalized": true,
+    "threeSamples": true,
+    "resetTo": 42,
+    "realRecordPreserved": true
+  },
+  "headingLevels": [
+    1,
+    2,
+    3,
+    3,
+    3,
+    2
+  ],
+  "routeFocus": true,
+  "routeMetadata": [
+    {
+      "path": "/",
+      "title": "Dose Count Compass — Count medicine doses",
+      "description": "Count doses in inhalers, sprays, injectables, and other medicine devices before you run out.",
+      "canonical": "https://dose-count-compass.sociobot.in/",
+      "ogUrl": "https://dose-count-compass.sociobot.in/",
+      "twitterTitle": "Dose Count Compass — Count medicine doses",
+      "h1s": 1,
+      "legal": [
+        "Privacy",
+        "Terms"
+      ]
+    },
+    {
+      "path": "/demo",
+      "title": "Demo — Dose Count Compass",
+      "description": "Try a sample dose inventory without saving anything to your own device list.",
+      "canonical": "https://dose-count-compass.sociobot.in/demo",
+      "ogUrl": "https://dose-count-compass.sociobot.in/demo",
+      "twitterTitle": "Demo — Dose Count Compass",
+      "h1s": 1,
+      "legal": [
+        "Privacy",
+        "Terms"
+      ]
+    },
+    {
+      "path": "/log",
+      "title": "My devices — Dose Count Compass",
+      "description": "Track the doses left in each medicine device on this device.",
+      "canonical": "https://dose-count-compass.sociobot.in/log",
+      "ogUrl": "https://dose-count-compass.sociobot.in/log",
+      "twitterTitle": "My devices — Dose Count Compass",
+      "h1s": 1,
+      "legal": [
+        "Privacy",
+        "Terms"
+      ]
+    },
+    {
+      "path": "/privacy",
+      "title": "Privacy — Dose Count Compass",
+      "description": "See how Dose Count Compass keeps your dose records in your browser.",
+      "canonical": "https://dose-count-compass.sociobot.in/privacy",
+      "ogUrl": "https://dose-count-compass.sociobot.in/privacy",
+      "twitterTitle": "Privacy — Dose Count Compass",
+      "h1s": 1,
+      "legal": [
+        "Privacy",
+        "Terms"
+      ]
+    },
+    {
+      "path": "/terms",
+      "title": "Terms — Dose Count Compass",
+      "description": "Read the terms for using Dose Count Compass as a personal dose counter.",
+      "canonical": "https://dose-count-compass.sociobot.in/terms",
+      "ogUrl": "https://dose-count-compass.sociobot.in/terms",
+      "twitterTitle": "Terms — Dose Count Compass",
+      "h1s": 1,
+      "legal": [
+        "Privacy",
+        "Terms"
+      ]
+    }
+  ],
+  "offline": {
+    "writeReloadCount": 41,
+    "missingStatus": 404,
+    "styled404": true,
+    "missingResourceErrors": []
+  },
+  "privacy": {
+    "crossOriginRequests": [],
+    "browserErrorsBeforeIntentional404": []
+  },
+  "online404": {
+    "status": 404,
+    "title": "Page not found — Dose Count Compass",
+    "description": "The requested Dose Count Compass page was not found. Return to your dose count or sample devices.",
+    "canonical": "https://dose-count-compass.sociobot.in/404.html",
+    "appleTouch": "/icon-180.svg",
+    "stylesheet": "/404.css",
+    "navPrivacy": true,
+    "footerTerms": true
+  },
+  "axe": [
+    {
+      "path": "/",
+      "seriousOrCritical": 0
+    },
+    {
+      "path": "/demo",
+      "seriousOrCritical": 0
+    },
+    {
+      "path": "/log",
+      "seriousOrCritical": 0
+    },
+    {
+      "path": "/privacy",
+      "seriousOrCritical": 0
+    },
+    {
+      "path": "/terms",
+      "seriousOrCritical": 0
+    },
+    {
+      "path": "/live-audit-missing",
+      "seriousOrCritical": 0
+    }
+  ],
+  "completedAt": "2026-08-28T17:42:04.273Z"
+}

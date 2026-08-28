@@ -1,51 +1,68 @@
-# Review 2 handoff — Dose Count Compass
+# Dose Count Compass — polish round 2 handoff
 
 ## Result
 
-Adversarial first-read review 2 is complete. The verdict is **FAIL** with ten
-findings in `.factory/review-2.md`: five blocking, one major, and four minor.
-No product source was changed.
+All findings in `.factory/review-1.md` and `.factory/review-2.md` are fixed,
+tested, pushed, deployed, and cold-checked at
+<https://dose-count-compass.sociobot.in>. The paper-cut medicine-cabinet
+identity and `pwa-offline` deployment class are unchanged.
 
-## What was reviewed
+The repair adds real demo-exit reset and isolation, complete claim inventory
+and tagged tests, clear first-screen/free-status copy, refill-reminder wording,
+sequential dashboard headings, complete route and 404 metadata, an offline
+styled HTTP 404, and cumulative regression coverage. `.factory/polish-2.md`
+maps every F-1 and F-2 finding to its change and evidence.
 
-- Cold live first reads at 390 × 844 and 1440 × 900.
-- One-click demo, Reset, Start for real, real/demo IndexedDB separation,
-  browser Back, offline write/reload, and same-origin traffic.
-- Every landing and README sentence, term, heading, and landing action.
-- Every exact command in `.factory/claims.json` from a clean clone.
-- Titles, metadata, link crawl, deep routes, 404, service-worker behavior,
-  focus/announcement, axe results, touch targets, reflow, visual identity, and
-  asset/security basics.
-- Every finding in `.factory/review-1.md` plus earlier verification defects,
-  the polish record, and the prior handoff.
+## Verification
 
-## Verification evidence
-
-Clean clone: `/tmp/dcc-review-2.sGVSxp`
+Clean clone: `/tmp/dcc-polish-2-clean.PxTdlQ`
 
 ```text
-npm ci                                      PASS; 20 packages, 0 vulnerabilities
-npm run lint                                PASS
-npm run build                               PASS; dist/ produced
-npm test                                    PASS; 19/19
-npm audit --audit-level=high                PASS; 0 vulnerabilities
-all 7 exact @claim commands                 PASS; 1 test each
-live verify-url.sh                          PASS; title/lang/h1/main/alt/errors
-live axe serious/critical route sweep       PASS; 0 on 6 routes
+npm ci                         PASS; 20 packages, 0 vulnerabilities
+npm run lint                   PASS
+10 exact claims.json commands PASS; one matching tagged test each
+npm test                       PASS; 23/23 Playwright tests
+npm run build                  PASS; dist/index.html produced
+verify-url.sh, local           PASS; no console errors
+Lighthouse, local             100 performance / 100 accessibility / 100 best practices / 100 SEO
+live cold audit                PASS; mobile, demo, routing, focus, privacy, offline, 404, axe
+verify-url.sh, live            PASS; no home-page console errors
 ```
 
-Build sizes were 19.14 KB JS (7.03 KB gzip) and 10.51 KB CSS (3.22 KB gzip).
-Live assets matched those names and used immutable caching.
+Build size is 19.49 KB raw / 7.11 KB gzip JavaScript and 10.59 KB raw /
+3.24 KB gzip CSS. Lighthouse measured LCP 1.7 s, CLS 0, and total blocking
+time 0 ms. The live axe sweep found zero serious or critical issues on `/`,
+`/demo`, `/log`, `/privacy`, `/terms`, and a missing route.
 
-## Items left
+Evidence is under `.factory/evidence/polish-2/`:
 
-- Demo changes persist after **Start for real**.
-- Core count, hero demo-result, and refill-threshold public claims are not
-  fully represented by tagged claim entries/tests.
-- The service-worker-controlled 404 is HTTP 200, loses its CSS offline, logs a
-  console error, and lacks required route metadata.
-- Dashboard device headings skip h2.
-- File-format and threshold jargon, one vague heading, and the absent
-  price/free fact remain.
+- `clean-claims.log`, `clean-full-suite.log`, `clean-lint.log`, and
+  `clean-build.log` contain clean-clone results.
+- `lighthouse-local.json` contains the complete Lighthouse report.
+- `live-audit.json` records cold first-screen geometry, demo reset/isolation,
+  route metadata/legal links/focus, offline persistence, online/offline HTTP
+  404, same-origin traffic, and axe results.
+- `live-home-mobile.png`, `live-demo-mobile.png`, and
+  `live-404-desktop.png` are the post-deploy screenshots.
+- `live-verify/verify.json` is the factory URL verifier result.
 
-See `.factory/review-2.md` for exact quotes, evidence, and concrete fixes.
+## Deploy
+
+The work-order command `npm ci && npm test && npm run build` passed before
+upload. `/opt/fleet/lib/deploy-static.sh dose-count-compass dist` deployed
+production successfully as deployment
+`25c0f469-2fee-42fa-9827-8fec108a9da7`. The custom domain returned the exact
+expected assets `index-B8_aQWlQ.js` and `index-6GeMvAbO.css` after deploy.
+
+## Run locally
+
+```sh
+npm ci
+npm test
+npm run build
+npm run preview
+```
+
+## Known gaps
+
+None.
