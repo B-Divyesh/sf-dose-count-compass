@@ -1,0 +1,14 @@
+:root { color: #19362e; background: #fbf7ed; font-family: ui-sans-serif, system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+header, main { max-width: 900px; margin: auto; padding: 24px; }
+header a { color: inherit; font: 700 1.2rem Georgia, serif; }
+main { padding-top: 14vh; }
+main > p:first-child { color: #2c684d; font-size: .78rem; font-weight: 800; letter-spacing: .12em; }
+h1 { font: clamp(2.8rem, 9vw, 5rem)/.98 Georgia, serif; letter-spacing: -.04em; margin: 0 0 20px; }
+main > p:not(:first-child) { font-size: 1.1rem; line-height: 1.55; max-width: 560px; }
+.button { display: inline-flex; min-height: 44px; align-items: center; padding: 9px 15px; border: 2px solid #2c684d; background: #2c684d; color: white; box-shadow: 3px 3px 0 #19362e; font-weight: 700; text-decoration: none; }
+.skip { position: absolute; top: -50px; left: 12px; background: #102821; color: white; padding: 10px; }
+.skip:focus { top: 12px; }
+a:focus-visible { outline: 4px solid #e6a93d; outline-offset: 3px; }
+@media (prefers-color-scheme: dark) { :root { color: #f8f3e7; background: #102821; } main > p:first-child { color: #a9d8b8; } }

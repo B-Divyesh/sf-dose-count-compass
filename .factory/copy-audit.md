@@ -7,7 +7,7 @@
 | See three devices already counted. | 5 | pass |
 | Saved on this device | 5 | pass |
 | Works offline after first visit | 5 | pass |
-| $9 once for Compass Plus | 5 | pass |
+| Export a backup any time | 5 | pass |
 | See the count, then take the next step | 9 | pass |
 | Enter the count printed on it. | 6 | pass |
 | The remaining count changes at once. | 6 | pass |

@@ -22,6 +22,9 @@
 * {
   box-sizing: border-box;
 }
+[hidden] {
+  display: none !important;
+}
 body {
   margin: 0;
   min-width: 320px;
@@ -103,6 +106,9 @@ textarea:focus-visible {
   color: #fff;
   padding: 10px;
   z-index: 10;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 .skip:focus {
   top: 12px;
@@ -121,12 +127,17 @@ header {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+  flex-wrap: wrap;
 }
 .wordmark {
   text-decoration: none;
   font-family: Georgia, serif;
   font-weight: 700;
   font-size: 1.1rem;
+  overflow-wrap: anywhere;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 .wordmark span {
   color: var(--coral);
@@ -135,6 +146,7 @@ header {
 }
 nav {
   display: flex;
+  flex-wrap: wrap;
   gap: 18px;
   font-size: 0.95rem;
 }
@@ -158,7 +170,14 @@ nav a {
 }
 .demo-bar .link-button {
   color: #fff;
-  min-height: 30px;
+  min-height: 44px;
+}
+.connection {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 5px 24px;
+  color: #40584f;
+  font-size: 0.82rem;
 }
 .hero {
   display: grid;
@@ -460,10 +479,18 @@ figcaption {
 }
 .file-label input {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.file-label {
+  position: relative;
+}
+.file-label:focus-within {
+  outline: 4px solid var(--sun);
+  outline-offset: 3px;
 }
 .safety-note {
   background: var(--mint);
@@ -578,9 +605,24 @@ menu {
   transition: transform 0.18s ease;
   max-width: calc(100vw - 32px);
   text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  visibility: hidden;
 }
 .toast.show {
   transform: translate(-50%, 0);
+  pointer-events: auto;
+  visibility: visible;
+}
+.toast-undo {
+  min-height: 38px;
+  min-width: 44px;
+  border-color: var(--sun);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: none;
 }
 footer {
   border-top: 2px solid var(--ink);
@@ -595,18 +637,43 @@ footer {
 footer p {
   margin: 0;
 }
+footer p:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+}
 @media (max-width: 760px) {
   header {
     min-height: 72px;
     padding-left: 16px;
     padding-right: 16px;
   }
+  .wordmark,
+  header nav {
+    width: 100%;
+  }
   header nav {
     gap: 12px;
     font-size: 0.84rem;
   }
+  header nav a {
+    flex: 1 1 44px;
+    justify-content: center;
+    overflow-wrap: anywhere;
+  }
   main,
   footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .connection {
     padding-left: 16px;
     padding-right: 16px;
   }
@@ -695,6 +762,9 @@ footer p {
   }
   .outline {
     color: var(--ink);
+  }
+  .connection {
+    color: #c8e0c6;
   }
   .hero-art:after {
     opacity: 0.8;
