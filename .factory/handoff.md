@@ -42,7 +42,13 @@ Browser coverage includes desktop, 390×844 mobile, 200% text reflow, Tab/Escape
 
 Final build payload: 18.33 KB JavaScript (6.82 KB gzip) and 10.37 KB CSS (3.17 KB gzip), below the static-product budgets. The original 37.5 KB hero image remains below the mobile image budget. A Lighthouse CLI attempt was made with the installed Chromium but the container's Lighthouse 13 runner closed its browser during the BFCache audit before producing a report; this is a local runner limitation, not a product failure. The prior independent live run was 100/100/100/100; rerun Lighthouse after deployment for a fresh live score.
 
+## Deployment evidence
+
+Published `dist/` with `/opt/fleet/lib/deploy-static.sh dose-count-compass dist` on 2026-08-28 UTC. Azure Static Web Apps deployment `e7a763aa-022f-42ee-a829-c40e1677ff6b` succeeded and `https://dose-count-compass.sociobot.in` returned HTTP 200.
+
+Live `verify-url.sh` passed in 1,218 ms with zero console/page errors and valid title, language, main landmark, image alt text, and button names. Live `/not-a-real-page` returns HTTP 404 with `frame-ancestors 'none'` and Permissions-Policy. The deployed hashed JavaScript and `sw.js` SHA-256 values exactly match local `dist/`; the live hashed JavaScript cache header is `public, max-age=31536000, immutable`.
+
 ## Known gaps / next steps
 
 - No paid tier is shipped. Register a real Sociobot product and implement a distinct paid capability only when that commercial workflow is authorized.
-- Deployment is performed after this handoff using the factory static deploy script for `dose-count-compass`; verify the live URL, headers, offline reload, and service-worker update after propagation.
+- Rerun Lighthouse against the live URL when the container runner supports the installed Chromium version.
