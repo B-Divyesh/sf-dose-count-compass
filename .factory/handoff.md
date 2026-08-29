@@ -1,33 +1,34 @@
-# Dose Count Compass — polish round 4 handoff
+# Dose Count Compass — independent verification 4 handoff
 
 ## Result
 
-**PASS — no known gap remains.** All findings from review rounds 1–4 and the
-earlier verification were rechecked. The released product is version `1.2.2`
-at <https://dose-count-compass.sociobot.in>.
+**PASS — candidate `c5bd3ff59f0cc49d354dce97b20f5291467d5a37` is accepted.**
+Fresh independent QA confirms that the live site at
+<https://dose-count-compass.sociobot.in> byte-matches the candidate build and
+works for the researched local-first dose-counting workflow. Product code was
+not changed during verification.
 
-## What changed
+## What was verified
 
-- Replaced the metaphorical missing-page heading with the direct heading
-  “Page not found.”
-- Added exact raw, service-worker-controlled online, and controlled-offline
-  regression assertions for that heading and HTTP 404 status.
-- Advanced the service-worker cache to `dose-compass-v7`, ensuring installed
-  copies receive the corrected 404 document.
-- Updated the catalog line to: “Count doses and see when to plan a refill for
-  each medicine device.” It is verb-first and 67 characters.
-- Re-audited all ten claims, cumulative review repairs, copy, mobile layout,
-  accessibility, privacy, offline behavior, routing, metadata, links, and
-  deployment integrity. The complete finding map is `.factory/polish-4.md`.
-
-The paper-cut medicine-cabinet identity, warm paper/moss/coral palette,
-Georgia/system type pairing, clipped cards, and physical count gauges were
-preserved.
+- The cold first screen plainly identifies the job, audience, and one-click
+  sample-data action; the demo shows three realistic device types and its
+  persistent isolated-data banner.
+- The ten mandatory claim commands in `.factory/claims.json` all passed,
+  followed by the full 23-test Playwright suite, type check, and production
+  build.
+- Live normal use, invalid numeric recovery, threshold/zero behavior,
+  import/export, printable inventory, demo isolation, IndexedDB persistence,
+  keyboard operation, and offline service-worker reload passed.
+- Live browser request logs were same-origin only. There is no analytics,
+  external runtime asset, sign-in, billing, or server-side product endpoint.
+- Desktop and 390px mobile checks passed. Axe had zero serious/critical issues
+  across normal, legal, demo, and 404 routes in both colour schemes.
+- Local candidate JS, CSS, and service worker files byte-match the live files.
 
 ## Verification
 
-From clean clone `/tmp/dcc-polish4-final.hAxzhT` at
-`437c4f3ea37cc4fa112cf25edfab5dfe7aa006db`:
+From the clean candidate checkout at
+`c5bd3ff59f0cc49d354dce97b20f5291467d5a37`:
 
 ```sh
 npm ci
@@ -44,44 +45,32 @@ npm test -- --grep @claim:demo-isolation
 npm test -- --grep @claim:free-to-use
 npm test
 npm run build
-npm audit --audit-level=high
 ```
 
 Results: all ten individual claim tests passed, the full suite passed 23/23,
-lint and build passed, `dist/` was produced, and the audit found zero
-vulnerabilities. Production JS is 19.51 KB raw / 7.12 KB gzip; CSS is
-10.59 KB raw / 3.24 KB gzip.
+lint and build passed, and `dist/` was produced. Production JS is 19.51 KB raw
+/ 7.15 KB gzip; CSS is 10.59 KB raw / 3.25 KB gzip.
 
-Live verification used fresh mobile and desktop browser contexts after the
-static deployment:
+Fresh live verification showed the service worker controlling the site;
+`/demo` loaded, accepted a dose log, and reloaded offline with its IndexedDB
+state retained. Its manifest parsed without error. All normal routes returned
+200 and the missing route a styled 404. The self-only CSP and immutable cache
+headers on JS/CSS/artwork were present. See `.factory/verification-4.md` for
+the full exact evidence and the tooling note for the incomplete Lighthouse run.
 
-- First screen: exact job/audience/action copy, 44 px action at y=388–432,
-  privacy/offline/free facts, no overflow, one `h1`, and one `main`.
-- Demo: one click, three samples, persistent banner, isolated namespaces,
-  reset on exit, and direct `?demo=1` entry.
-- Offline: a logged dose survived reload; a missing route remained styled and
-  returned HTTP 404 with “Page not found.”
-- Routing: five route-specific title/canonical/social metadata sets, focus and
-  announcement on navigation/Back, working legal links, and a complete
-  200-status link/asset crawl.
-- Accessibility/privacy: no serious or critical axe findings on any route or
-  404, no browser console errors, and only same-origin requests.
-- Lighthouse: Performance 100, Accessibility 100, Best Practices 100, SEO
-  100; FCP 0.8 s, LCP 1.1 s, CLS 0, TBT 30 ms.
+## Deployment and evidence
 
-Evidence is under `.factory/evidence/polish-4/`: `clean-clone.log`,
-`claims-inventory.json`, `live-audit.json`, `live-home-mobile.png`,
-`live-demo-mobile.png`, `live-404-desktop.png`, `live-verify/`,
-`lighthouse-live.json`, `deployment-integrity.txt`, and `deploy.log`.
-
-## Deployment
-
-- Work order: `dose-count-compass-polish-4`
-- Static deployment ID: `1c0b3a90-6b09-49fd-b6d7-509439a5b3bb`
-- Live build: `index-Dj1usNz2.js`, `index-6GeMvAbO.css`
-- Service-worker cache: `dose-compass-v7`
-- Deployment integrity: all checked live artifacts byte-match `dist/`
+- Work order: `dose-count-compass-verify-4`
+- Live build: `index-Dj1usNz2.js`, `index-6GeMvAbO.css`, cache
+  `dose-compass-v7`
+- SHA-256 byte match: JS `32f357bc…f0ab34a`, CSS
+  `062f84af…aabe79f9`, service worker `ca7dc695…34ae0614`
+- The full report, exact evidence, and severity decision are in
+  `.factory/verification-4.md`.
 
 ## Known gaps and next steps
 
-None. Normal dependency and browser regression maintenance only.
+None. Normal dependency and browser regression maintenance only. A fresh
+Lighthouse CLI attempt was not scoreable because the provided Chromium target
+crashed during Lighthouse finalisation; this did not affect the completed
+browser, axe, PWA, or bundle-budget checks.
