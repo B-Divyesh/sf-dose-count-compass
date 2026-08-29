@@ -1,4 +1,26 @@
-# Dose Count Compass — polish round 5 handoff
+# Dose Count Compass — verification 5 handoff
+
+## Independent release decision (2026-08-29 UTC)
+
+**PASS** — independently verified candidate
+`2d0786359d8a106ba807bdaa17615aeb73aa1f8b` at
+<https://dose-count-compass.sociobot.in>. Product code was not changed during
+this verification. Fresh local `dist/index.html`, hashed JS/CSS, and `sw.js`
+byte-match the live deployment.
+
+From a clean checkout, `npm ci`, `npm run lint`, `npm test` (27/27), and
+`npm run build` passed. All 12 exact claim commands in `.factory/claims.json`
+passed. Live evidence includes a passing cold first-read/demo gate, normal and
+invalid/recovery flows, zero/refill boundaries, export/import/print, offline
+reload, service-worker update toast, keyboard operation, 390px mobile,
+request-log privacy, headers/caching, and axe scans. No console/page errors,
+cross-origin data requests, or serious/critical axe findings were found.
+
+There are no defects by severity. Full evidence, including claim table,
+hashes, headers, and the Lighthouse tooling note, is in
+`.factory/verification-5.md`.
+
+## Previous builder handoff
 
 ## Result
 
