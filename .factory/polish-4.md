@@ -58,8 +58,8 @@ the deployed site. The live audit is
 
 `.factory/claims.json` contains ten unique claims. Each has exactly one
 `@claim:<id>` test and there are no extra claim tags; see
-`claims-inventory.json`. From clean clone `/tmp/dcc-polish4-clean.KdbrCF` at
-the product repair commit:
+`claims-inventory.json`. From clean clone `/tmp/dcc-polish4-final.hAxzhT` at
+commit `437c4f3ea37cc4fa112cf25edfab5dfe7aa006db`:
 
 ```text
 npm ci                         PASS — 20 packages, 0 vulnerabilities

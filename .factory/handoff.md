@@ -26,7 +26,8 @@ preserved.
 
 ## Verification
 
-From clean clone `/tmp/dcc-polish4-clean.KdbrCF`:
+From clean clone `/tmp/dcc-polish4-final.hAxzhT` at
+`437c4f3ea37cc4fa112cf25edfab5dfe7aa006db`:
 
 ```sh
 npm ci
