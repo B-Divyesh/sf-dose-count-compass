@@ -1,76 +1,41 @@
-# Dose Count Compass — independent verification 4 handoff
+# Dose Count Compass — adversarial review 5 handoff
 
 ## Result
 
-**PASS — candidate `c5bd3ff59f0cc49d354dce97b20f5291467d5a37` is accepted.**
-Fresh independent QA confirms that the live site at
-<https://dose-count-compass.sociobot.in> byte-matches the candidate build and
-works for the researched local-first dose-counting workflow. Product code was
-not changed during verification.
+**FAIL.** Review 5 is recorded in `.factory/review-5.md`. Product code was not
+changed.
 
-## What was verified
+The cold first screen, one-click isolated demo, ten listed claims, offline
+reload, route structure, live metadata, accessibility automation, historical
+repairs, lint, full test suite, and production build pass. Six new findings
+remain: an unlisted 30-second Undo promise, an unlisted and ambiguous
+edit-later promise, non-specific device-card accessible names, a CSV term
+regression, an unclear README heading, and a privacy contact instruction with
+no link.
 
-- The cold first screen plainly identifies the job, audience, and one-click
-  sample-data action; the demo shows three realistic device types and its
-  persistent isolated-data banner.
-- The ten mandatory claim commands in `.factory/claims.json` all passed,
-  followed by the full 23-test Playwright suite, type check, and production
-  build.
-- Live normal use, invalid numeric recovery, threshold/zero behavior,
-  import/export, printable inventory, demo isolation, IndexedDB persistence,
-  keyboard operation, and offline service-worker reload passed.
-- Live browser request logs were same-origin only. There is no analytics,
-  external runtime asset, sign-in, billing, or server-side product endpoint.
-- Desktop and 390px mobile checks passed. Axe had zero serious/critical issues
-  across normal, legal, demo, and 404 routes in both colour schemes.
-- Local candidate JS, CSS, and service worker files byte-match the live files.
+## Verification performed
 
-## Verification
+Fresh clone `/tmp/dcc-review5-clean.CeToWW` at
+`59c9c2ff7d7314b326a7adf48401f3849eee21a3`:
 
-From the clean candidate checkout at
-`c5bd3ff59f0cc49d354dce97b20f5291467d5a37`:
-
-```sh
-npm ci
-npm run lint
-npm test -- --grep @claim:offline-reload
-npm test -- --grep @claim:csv-export
-npm test -- --grep @claim:json-export
-npm test -- --grep @claim:backup-import
-npm test -- --grep @claim:print-card
-npm test -- --grep @claim:local-only
-npm test -- --grep @claim:log-updates-count
-npm test -- --grep @claim:refill-reminder
-npm test -- --grep @claim:demo-isolation
-npm test -- --grep @claim:free-to-use
-npm test
-npm run build
+```text
+npm ci                         PASS
+10 exact claims.json commands  PASS
+npm run lint                   PASS
+npm test                       PASS — 23/23
+npm run build                  PASS — dist/ produced
 ```
 
-Results: all ten individual claim tests passed, the full suite passed 23/23,
-lint and build passed, and `dist/` was produced. Production JS is 19.51 KB raw
-/ 7.15 KB gzip; CSS is 10.59 KB raw / 3.25 KB gzip.
-
-Fresh live verification showed the service worker controlling the site;
-`/demo` loaded, accepted a dose log, and reloaded offline with its IndexedDB
-state retained. Its manifest parsed without error. All normal routes returned
-200 and the missing route a styled 404. The self-only CSP and immutable cache
-headers on JS/CSS/artwork were present. See `.factory/verification-4.md` for
-the full exact evidence and the tooling note for the incomplete Lighthouse run.
-
-## Deployment and evidence
-
-- Work order: `dose-count-compass-verify-4`
-- Live build: `index-Dj1usNz2.js`, `index-6GeMvAbO.css`, cache
-  `dose-compass-v7`
-- SHA-256 byte match: JS `32f357bc…f0ab34a`, CSS
-  `062f84af…aabe79f9`, service worker `ca7dc695…34ae0614`
-- The full report, exact evidence, and severity decision are in
-  `.factory/verification-4.md`.
+Live checks at <https://dose-count-compass.sociobot.in> covered 390 × 844 and
+1440 × 900 cold reads, demo/real IndexedDB isolation, Reset and Start for real,
+offline write/reload, controlled offline 404, request logging, metadata and
+link crawling, route-change/Back focus, 200% text sizing, 44 px targets, and
+axe-core in light/dark schemes. `/opt/fleet/lib/verify-url.sh` also passed with
+no home-page console error. Live JavaScript and CSS byte-match the clean build.
 
 ## Known gaps and next steps
 
-None. Normal dependency and browser regression maintenance only. A fresh
-Lighthouse CLI attempt was not scoreable because the provided Chromium target
-crashed during Lighthouse finalisation; this did not affect the completed
-browser, axe, PWA, or bundle-budget checks.
+Resolve F-5-1 through F-5-6 exactly as specified in `.factory/review-5.md`,
+add claim and accessible-name coverage, then repeat the complete review from a
+fresh clone and fresh live browser contexts. The intended next verdict remains
+zero-finding PASS.
