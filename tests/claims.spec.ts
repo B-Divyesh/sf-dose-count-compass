@@ -227,6 +227,9 @@ test("route navigation updates focus, announcement, canonical, and social metada
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", "https://dose-count-compass.sociobot.in/demo");
   await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute("content", "Demo — Dose Count Compass");
   await page.getByRole("link", { name: "My devices" }).click();
+  await expect(page).toHaveTitle("Dose Count Compass — Track device doses");
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", "Dose Count Compass — Track device doses");
+  await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute("content", "Dose Count Compass — Track device doses");
   await page.goBack();
   await expect(page.getByRole("heading", { name: "Three devices, counted for you" })).toBeFocused();
   await expect(page.locator(".route-announcer")).toHaveText("Now viewing: Three devices, counted for you");

@@ -44,3 +44,9 @@ banned marketing term appears.
 
 `JSON`, `CSV`, `IndexedDB`, and `threshold` remain only in implementation,
 tests, historical reviews, or the README file-format section for developers.
+
+## Catalog description
+
+| Copy | Words | Result |
+| --- | ---: | --- |
+| Count doses and see refill reminders before a medicine device runs out. | 12 | verb-first; `log-updates-count`, `refill-reminder`; 67 characters |

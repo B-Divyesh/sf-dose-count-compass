@@ -12,7 +12,7 @@ Undo. Print an inventory card. Try three separate sample devices at
 ## Run
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
@@ -25,6 +25,11 @@ npm run build
 
 The static deploy output is `dist/`, with `index.html` at its root. Preview it
 with `npm run preview`.
+
+## Deploy
+
+Build with `npm run build`. The factory static work order publishes the
+resulting `dist/` directory with `public/staticwebapp.config.json`.
 
 ## File formats
 

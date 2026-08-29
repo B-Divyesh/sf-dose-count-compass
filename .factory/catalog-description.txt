@@ -1,1 +1,1 @@
-Count medicine-device doses offline and get a refill reminder before the device runs out.
+Count doses and see refill reminders before a medicine device runs out.
