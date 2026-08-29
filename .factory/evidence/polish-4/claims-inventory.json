@@ -1,0 +1,18 @@
+{
+  "claimCount": 10,
+  "uniqueIds": 10,
+  "tagCounts": {
+    "offline-reload": 1,
+    "csv-export": 1,
+    "json-export": 1,
+    "backup-import": 1,
+    "print-card": 1,
+    "local-only": 1,
+    "log-updates-count": 1,
+    "refill-reminder": 1,
+    "demo-isolation": 1,
+    "free-to-use": 1
+  },
+  "extraTags": [],
+  "allExactlyOnce": true
+}

@@ -1,0 +1,141 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "label": "local",
+  "firstScreen": {
+    "title": "Dose Count Compass — Count medicine doses",
+    "h1": "Count doses before you run out",
+    "lead": "For people who track doses but do not need a full medicine app.",
+    "action": {
+      "x": 16,
+      "y": 388.125,
+      "width": 241.671875,
+      "height": 44,
+      "top": 388.125,
+      "right": 257.671875,
+      "bottom": 432.125,
+      "left": 16
+    },
+    "facts": [
+      "Saved in your browser",
+      "Works offline after first visit",
+      "Free to use"
+    ],
+    "h1s": 1,
+    "main": true,
+    "overflow": false
+  },
+  "demo": {
+    "oneClick": true,
+    "samples": 3,
+    "banner": true,
+    "resetTo": 42,
+    "realDataSeparate": true
+  },
+  "routeFocus": true,
+  "offlineAndPrivacy": {
+    "savedCount": 41,
+    "missingStatus": 404,
+    "sameOriginOnly": true,
+    "browserErrors": []
+  },
+  "f4_1": {
+    "status": 404,
+    "heading": "Page not found",
+    "styled": true,
+    "sharedShell": true
+  },
+  "routes": [
+    {
+      "path": "/",
+      "title": "Dose Count Compass — Count medicine doses",
+      "canonical": "https://dose-count-compass.sociobot.in/",
+      "description": "Count doses in inhalers, sprays, injectables, and other medicine devices before you run out.",
+      "ogTitle": "Dose Count Compass — Count medicine doses",
+      "twitterTitle": "Dose Count Compass — Count medicine doses",
+      "h1s": 1,
+      "legal": [
+        "Privacy",
+        "Terms"
+      ]
+    },
+    {
+      "path": "/demo",
+      "title": "Demo — Dose Count Compass",
+      "canonical": "https://dose-count-compass.sociobot.in/demo",
+      "description": "Try a sample dose inventory without saving anything to your own device list.",
+      "ogTitle": "Demo — Dose Count Compass",
+      "twitterTitle": "Demo — Dose Count Compass",
+      "h1s": 1,
+      "legal": [
+        "Privacy",
+        "Terms"
+      ]
+    },
+    {
+      "path": "/log",
+      "title": "Dose Count Compass — Track device doses",
+      "canonical": "https://dose-count-compass.sociobot.in/log",
+      "description": "Track the doses left in each medicine device on this device.",
+      "ogTitle": "Dose Count Compass — Track device doses",
+      "twitterTitle": "Dose Count Compass — Track device doses",
+      "h1s": 1,
+      "legal": [
+        "Privacy",
+        "Terms"
+      ]
+    },
+    {
+      "path": "/privacy",
+      "title": "Privacy — Dose Count Compass",
+      "canonical": "https://dose-count-compass.sociobot.in/privacy",
+      "description": "See how Dose Count Compass keeps your dose records in your browser.",
+      "ogTitle": "Privacy — Dose Count Compass",
+      "twitterTitle": "Privacy — Dose Count Compass",
+      "h1s": 1,
+      "legal": [
+        "Privacy",
+        "Terms"
+      ]
+    },
+    {
+      "path": "/terms",
+      "title": "Terms — Dose Count Compass",
+      "canonical": "https://dose-count-compass.sociobot.in/terms",
+      "description": "Read the terms for using Dose Count Compass as a personal dose counter.",
+      "ogTitle": "Terms — Dose Count Compass",
+      "twitterTitle": "Terms — Dose Count Compass",
+      "h1s": 1,
+      "legal": [
+        "Privacy",
+        "Terms"
+      ]
+    }
+  ],
+  "axe": [
+    {
+      "path": "/",
+      "seriousOrCritical": 0
+    },
+    {
+      "path": "/demo",
+      "seriousOrCritical": 0
+    },
+    {
+      "path": "/log",
+      "seriousOrCritical": 0
+    },
+    {
+      "path": "/privacy",
+      "seriousOrCritical": 0
+    },
+    {
+      "path": "/terms",
+      "seriousOrCritical": 0
+    },
+    {
+      "path": "/polish-4-missing",
+      "seriousOrCritical": 0
+    }
+  ],
+  "completedAt": "2026-08-29T08:19:36.063Z"
+}

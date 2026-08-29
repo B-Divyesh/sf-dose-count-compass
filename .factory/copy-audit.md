@@ -49,4 +49,13 @@ tests, historical reviews, or the README file-format section for developers.
 
 | Copy | Words | Result |
 | --- | ---: | --- |
-| Count doses and see refill reminders before a medicine device runs out. | 12 | verb-first; `log-updates-count`, `refill-reminder`; 67 characters |
+| Count doses and see when to plan a refill for each medicine device. | 13 | verb-first; `log-updates-count`, `refill-reminder`; 67 characters |
+
+## Missing-page copy
+
+| Copy | Words | Result |
+| --- | ---: | --- |
+| Page not found | 3 | direct recovery heading; F-4-1 fixed |
+| The page you requested does not exist. | 7 | direct explanation |
+| Return to your dose count. | 5 | clear next step |
+| Go to Dose Count Compass | 5 | result-naming recovery action |
