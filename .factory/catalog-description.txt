@@ -1,1 +1,1 @@
-Count doses and see when to plan a refill for each medicine device.
+Track doses and plan a refill for each medicine device.

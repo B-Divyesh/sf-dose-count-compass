@@ -9,7 +9,7 @@ backup file or dose-history spreadsheet. Import a backup with confirmation and
 Undo. Print an inventory card. Try three separate sample devices at
 `/?demo=1`.
 
-## Run
+## Run locally
 
 ```sh
 npm ci

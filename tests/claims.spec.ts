@@ -10,7 +10,7 @@ test("@claim:offline-reload Works offline after the first visit", async ({
   await page.waitForFunction(() => navigator.serviceWorker.ready);
   await page.reload();
   await context.setOffline(true);
-  await page.getByRole("button", { name: "Log 1 puff" }).click();
+  await page.getByRole("button", { name: "Log 1 puff for Blue rescue inhaler" }).click();
   await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText("41");
   await page.reload();
   await expect(
@@ -22,7 +22,7 @@ test("@claim:offline-reload Works offline after the first visit", async ({
 
 test("@claim:csv-export Downloads dose history as a spreadsheet file", async ({ page }) => {
   await page.goto("/demo");
-  await page.getByRole("button", { name: "Log 1 puff" }).click();
+  await page.getByRole("button", { name: "Log 1 puff for Blue rescue inhaler" }).click();
   const download = page.waitForEvent("download");
   await page.getByRole("button", { name: "Download dose history" }).click();
   const file = await download;
@@ -71,7 +71,7 @@ test("@claim:demo-isolation One-click demo stays separate and resets when leavin
   await expect(page.getByText("Saline spray")).toBeVisible();
   await expect(page.getByText("Travel injector")).toBeVisible();
   await expect(page.getByText("Private real inhaler")).toHaveCount(0);
-  await page.getByRole("button", { name: "Log 1 puff" }).click();
+  await page.getByRole("button", { name: "Log 1 puff for Blue rescue inhaler" }).click();
   await expect(page.locator('[data-device="sample-blue"] .count-row strong')).toHaveText("41");
   await page.getByRole("button", { name: "Start for real" }).click();
   await expect(page.getByText("Private real inhaler")).toBeVisible();
@@ -173,7 +173,7 @@ test("@claim:free-to-use Core use has no purchase gate", async ({ page }) => {
   await page.getByLabel("Doses left").fill("2");
   await page.getByLabel("Refill reminder count").fill("1");
   await page.getByRole("button", { name: "Save device" }).click();
-  await page.getByRole("button", { name: "Log 1 puff" }).click();
+  await page.getByRole("button", { name: "Log 1 puff for Free-use inhaler" }).click();
   await expect(page.getByText("Free-use inhaler")).toBeVisible();
   expect(billingRequests).toEqual([]);
 });
@@ -269,12 +269,89 @@ test("@claim:backup-import Import validates, confirms replacement, and supports 
 
 test("deleting a device is confirmed and can be undone", async ({ page }) => {
   await page.goto("/demo");
-  await page.getByRole("button", { name: "Edit" }).first().click();
+  await page.getByRole("button", { name: "Edit Blue rescue inhaler" }).click();
   page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "Delete device" }).click();
   await expect(page.getByRole("heading", { name: "Blue rescue inhaler" })).toHaveCount(0);
   await page.getByRole("button", { name: "Undo" }).click();
   await expect(page.getByRole("heading", { name: "Blue rescue inhaler" })).toBeVisible();
+});
+
+test("@claim:undo-window Undo remains available for 30 seconds after import or deletion", async ({ page }) => {
+  await page.clock.install({ time: new Date("2026-08-29T12:00:00.000Z") });
+  await page.goto("/demo");
+  await page.clock.pauseAt(new Date("2026-08-29T12:01:00.000Z"));
+  const replacement = { version: 1, devices: [{ id: "replacement", name: "Replacement only", kind: "Inhaler", total: 60, remaining: 60, threshold: 12, notes: "", updated: "2026-08-28T00:00:00.000Z", logs: [] }] };
+  await page.getByLabel("Import backup file").setInputFiles({ name: "valid.json", mimeType: "application/json", buffer: Buffer.from(JSON.stringify(replacement)) });
+  await page.getByRole("button", { name: "Replace with backup" }).click();
+  await expect(page.getByRole("button", { name: "Undo" })).toBeVisible();
+  await page.clock.runFor(29_999);
+  await expect(page.getByRole("button", { name: "Undo" })).toBeVisible();
+  await page.clock.runFor(1);
+  await expect(page.getByRole("button", { name: "Undo" })).toBeHidden();
+
+  await page.getByRole("button", { name: "Reset demo" }).click();
+  await page.getByRole("button", { name: "Edit Blue rescue inhaler" }).click();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Delete device" }).click();
+  await expect(page.getByRole("button", { name: "Undo" })).toBeVisible();
+  await page.clock.runFor(29_999);
+  await expect(page.getByRole("button", { name: "Undo" })).toBeVisible();
+  await page.clock.runFor(1);
+  await expect(page.getByRole("button", { name: "Undo" })).toBeHidden();
+});
+
+test("@claim:edit-device Edits saved device details", async ({ page }) => {
+  await page.goto("/log");
+  await page.getByRole("button", { name: "Add a device" }).click();
+  await page.getByLabel("Name").fill("Original inhaler");
+  await page.getByLabel("Total doses").fill("60");
+  await page.getByLabel("Doses left").fill("60");
+  await page.getByLabel("Refill reminder count").fill("12");
+  await page.getByRole("button", { name: "Save device" }).click();
+  await page.getByRole("button", { name: "Edit Original inhaler" }).click();
+  await page.getByLabel("Name").fill("Edited inhaler");
+  await page.getByLabel("Total doses").fill("48");
+  await page.getByLabel("Doses left").fill("36");
+  await page.getByLabel("Refill reminder count").fill("10");
+  await page.getByLabel("Private note (optional)").fill("Desk drawer");
+  await page.getByRole("button", { name: "Save device" }).click();
+  await expect(page.getByRole("heading", { name: "Edited inhaler" })).toBeVisible();
+  await expect(page.locator('[data-device] .count-row')).toContainText("36");
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Edited inhaler" })).toBeVisible();
+  await expect(page.locator('[data-device] .count-row')).toContainText("36");
+  await page.getByRole("button", { name: "Edit Edited inhaler" }).click();
+  await expect(page.getByLabel("Private note (optional)")).toHaveValue("Desk drawer");
+});
+
+test("device-card action names identify their device", async ({ page }) => {
+  await page.goto("/log");
+  for (const name of ["First inhaler", "Second inhaler"]) {
+    await page.getByRole("button", { name: "Add a device" }).click();
+    await page.getByLabel("Name").fill(name);
+    await page.getByLabel("Total doses").fill("10");
+    await page.getByLabel("Doses left").fill("10");
+    await page.getByLabel("Refill reminder count").fill("2");
+    await page.getByRole("button", { name: "Save device" }).click();
+  }
+  const names = await page.locator('[data-device] [data-action="dose"], [data-device] [data-action="edit"]').evaluateAll((buttons) => buttons.map((button) => button.getAttribute("aria-label")));
+  expect(names).toEqual(expect.arrayContaining([
+    "Log 1 puff for First inhaler",
+    "Edit First inhaler",
+    "Log 1 puff for Second inhaler",
+    "Edit Second inhaler",
+  ]));
+  expect(new Set(names).size).toBe(names.length);
+});
+
+test("privacy page provides a direct, marked external product-listing link", async ({ page }) => {
+  await page.goto("/privacy");
+  await expect(page.getByRole("link", { name: "Param Factory product listing (external link)" })).toHaveAttribute(
+    "href",
+    "https://hello-factory.sociobot.in/catalog/?q=dose-count-compass",
+  );
+  await expect(page.getByRole("link", { name: "Param Factory product listing (external link)" })).toHaveAttribute("rel", "external");
 });
 
 test("keyboard order, dialog return focus, file focus, and 200% reflow are usable", async ({ page }) => {

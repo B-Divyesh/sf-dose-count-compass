@@ -41,6 +41,7 @@ banned marketing term appears.
 | Full data copy | backup file |
 | Dose-event download | dose-history spreadsheet |
 | Example mode | demo / sample data |
+| Saved record properties | device details |
 
 `JSON`, `CSV`, `IndexedDB`, and `threshold` remain only in implementation,
 tests, historical reviews, or the README file-format section for developers.
@@ -49,7 +50,19 @@ tests, historical reviews, or the README file-format section for developers.
 
 | Copy | Words | Result |
 | --- | ---: | --- |
-| Count doses and see when to plan a refill for each medicine device. | 13 | verb-first; `log-updates-count`, `refill-reminder`; 67 characters |
+| Track doses and plan a refill for each medicine device. | 10 | verb-first; `log-updates-count`, `refill-reminder`; 52 characters |
+
+## Round 5 product copy
+
+| Copy | Words | Result |
+| --- | ---: | --- |
+| You can undo this replacement for 30 seconds. | 8 | `undo-window`; quantitative duration is tested at 29,999 ms and 30,000 ms |
+| Delete Blue rescue inhaler? You can undo this for 30 seconds. | 10 | `undo-window`; device name changes with the selected device |
+| Use the total count printed on the device. | 8 | clear form instruction |
+| You can edit the device details later. | 7 | `edit-device`; specific object and saved-after-reload test |
+| Dose-history spreadsheet downloaded. | 3 | consistent post-download status wording |
+| Run locally | 2 | README heading names the section's purpose |
+| For a privacy question, use the Param Factory product listing (external link). | 12 | direct, marked external destination; link-crawl checked |
 
 ## Missing-page copy
 

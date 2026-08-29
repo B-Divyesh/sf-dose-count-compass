@@ -21,8 +21,8 @@ test("production build has no CSP console errors or inline styles", async ({
   );
   await expect(page.locator("[style]")).toHaveCount(0);
 
-  await page.getByRole("button", { name: "Log 1 puff" }).click();
-  await page.getByRole("button", { name: "Edit" }).first().click();
+  await page.getByRole("button", { name: "Log 1 puff for Blue rescue inhaler" }).click();
+  await page.getByRole("button", { name: "Edit Blue rescue inhaler" }).click();
   await page.getByRole("button", { name: "Cancel" }).click();
   await expect(page.locator("[style]")).toHaveCount(0);
 

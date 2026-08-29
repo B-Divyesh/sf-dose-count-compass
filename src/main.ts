@@ -20,6 +20,7 @@ let returnFocusSelector: string | null = null;
 let lastTriggerSelector: string | null = null;
 let undoSnapshot: Device[] | null = null;
 let undoTimer: number | undefined;
+let undoNamespace: string | null = null;
 
 const dbName = () => `${demo ? "demo:" : "real:"}dose-count-compass`;
 function openDb(): Promise<IDBDatabase> {
@@ -50,7 +51,8 @@ async function save() { await writeState(devices); }
 function esc(value: string) { const node = document.createElement("span"); node.textContent = value; return node.innerHTML; }
 const id = () => crypto.randomUUID();
 const siteUrl = "https://dose-count-compass.sociobot.in";
-const buildVersion = "1.2.2";
+const buildVersion = "1.2.3";
+const undoWindowMs = 30_000;
 function pageTitle(path = location.pathname) {
   if (path === "/privacy") return "Privacy — Dose Count Compass";
   if (path === "/terms") return "Terms — Dose Count Compass";
@@ -96,7 +98,9 @@ function home() {
 }
 function deviceCard(device: Device, preview = false) {
   const [kind, message] = status(device);
-  return `<article class="device-card ${kind}" data-device="${device.id}"><div class="device-top"><p class="device-kind">${device.kind}</p><span class="status ${kind}">${message}</span></div><h3>${esc(device.name)}</h3><div class="count-row"><strong>${device.remaining}</strong><span>of ${device.total} left<br>${unit(device, device.remaining)}</span></div><progress class="gauge" aria-label="Doses remaining" max="${device.total}" value="${device.remaining}">${device.remaining} of ${device.total}</progress>${preview ? "<p class=\"small\">A refill reminder starts at 30 puffs.</p>" : `<div class="card-actions"><button data-action="dose" data-id="${device.id}" ${device.remaining === 0 ? "disabled" : ""}>Log 1 ${device.kind === "Spray" ? "spray" : device.kind === "Injector" ? "device" : device.kind === "Other" ? "dose" : "puff"}</button><button class="quiet" data-action="edit" data-id="${device.id}">Edit</button></div>`}</article>`;
+  const doseLabel = `Log 1 ${device.kind === "Spray" ? "spray" : device.kind === "Injector" ? "device" : device.kind === "Other" ? "dose" : "puff"}`;
+  const name = esc(device.name);
+  return `<article class="device-card ${kind}" data-device="${device.id}"><div class="device-top"><p class="device-kind">${device.kind}</p><span class="status ${kind}">${message}</span></div><h3>${name}</h3><div class="count-row"><strong>${device.remaining}</strong><span>of ${device.total} left<br>${unit(device, device.remaining)}</span></div><progress class="gauge" aria-label="Doses remaining for ${name}" max="${device.total}" value="${device.remaining}">${device.remaining} of ${device.total}</progress>${preview ? "<p class=\"small\">A refill reminder starts at 30 puffs.</p>" : `<div class="card-actions"><button data-action="dose" data-id="${device.id}" aria-label="${doseLabel} for ${name}" ${device.remaining === 0 ? "disabled" : ""}>${doseLabel}</button><button class="quiet" data-action="edit" data-id="${device.id}" aria-label="Edit ${name}">Edit</button></div>`}</article>`;
 }
 function dashboard() {
   const low = devices.filter((device) => device.remaining <= device.threshold).length;
@@ -106,7 +110,7 @@ function emptyState() { return `<div class="empty"><h3>Your device list is empty
 function policy(title: string, content: string) { return shell(`<article class="prose"><h1 tabindex="-1">${title}</h1>${content}</article>`); }
 function deviceDialog() {
   const current = devices.find((device) => device.id === editing); const isEdit = Boolean(current);
-  return `<dialog id="device-dialog" aria-labelledby="device-dialog-title"><form id="device-form"><div class="dialog-heading"><h2 id="device-dialog-title">${isEdit ? "Edit this device" : "Add a device"}</h2><button class="icon-button" value="cancel" aria-label="Close">×</button></div><p class="form-help">Use the total count printed on the device. You can change it later.</p><label>Name<input required name="name" maxlength="60" value="${esc(current?.name ?? "")}" placeholder="For example, blue rescue inhaler"></label><label>Device type<select name="kind">${kinds.map((kind) => `<option ${current?.kind === kind ? "selected" : ""}>${kind}</option>`).join("")}</select></label><div class="form-grid"><label>Total doses<input required name="total" type="number" min="1" max="10000" value="${current?.total ?? ""}"></label><label>Doses left<input required name="remaining" type="number" min="0" max="10000" value="${current?.remaining ?? ""}"></label></div><label>Refill reminder count<input required name="threshold" type="number" min="0" max="10000" value="${current?.threshold ?? ""}"><small>Show a refill reminder at this count.</small></label><label>Private note (optional)<textarea name="notes" maxlength="180" placeholder="Where it is kept">${esc(current?.notes ?? "")}</textarea></label><menu><button value="cancel" class="quiet">Cancel</button>${isEdit ? '<button value="delete" class="danger">Delete device</button>' : ""}<button value="save" class="button primary">Save device</button></menu></form></dialog>`;
+  return `<dialog id="device-dialog" aria-labelledby="device-dialog-title"><form id="device-form"><div class="dialog-heading"><h2 id="device-dialog-title">${isEdit ? "Edit this device" : "Add a device"}</h2><button class="icon-button" value="cancel" aria-label="Close">×</button></div><p class="form-help">Use the total count printed on the device. You can edit the device details later.</p><label>Name<input required name="name" maxlength="60" value="${esc(current?.name ?? "")}" placeholder="For example, blue rescue inhaler"></label><label>Device type<select name="kind">${kinds.map((kind) => `<option ${current?.kind === kind ? "selected" : ""}>${kind}</option>`).join("")}</select></label><div class="form-grid"><label>Total doses<input required name="total" type="number" min="1" max="10000" value="${current?.total ?? ""}"></label><label>Doses left<input required name="remaining" type="number" min="0" max="10000" value="${current?.remaining ?? ""}"></label></div><label>Refill reminder count<input required name="threshold" type="number" min="0" max="10000" value="${current?.threshold ?? ""}"><small>Show a refill reminder at this count.</small></label><label>Private note (optional)<textarea name="notes" maxlength="180" placeholder="Where it is kept">${esc(current?.notes ?? "")}</textarea></label><menu><button value="cancel" class="quiet">Cancel</button>${isEdit ? '<button value="delete" class="danger">Delete device</button>' : ""}<button value="save" class="button primary">Save device</button></menu></form></dialog>`;
 }
 function importDialog() {
   if (!pendingImport) return ""; const current = devices.length;
@@ -114,30 +118,48 @@ function importDialog() {
 }
 function render(focusHeading = false) {
   const path = location.pathname; setMetadata(path);
-  const view = path === "/privacy" ? policy("Your data stays in your browser", `<p>Saved in your browser.</p><h2>Your choices</h2><p>Download or import a backup file only when you choose.</p><h2>Contact</h2><p>For a privacy question, contact the Param Factory through its product listing.</p>`) : path === "/terms" ? policy("Terms for using Dose Count Compass", `<p>This tool helps you keep a personal count. It is not medical advice and cannot confirm a device is usable.</p><h2>Your responsibility</h2><p>Check the physical device, its indicator, label, expiry date, and your clinician or pharmacist’s instructions. Keep a backup when your situation requires it.</p><h2>Price</h2><p>Dose Count Compass is free to use.</p>`) : path === "/demo" || path === "/log" || routeIsDemo() ? dashboard() : home();
+  const view = path === "/privacy" ? policy("Your data stays in your browser", `<p>Saved in your browser.</p><h2>Your choices</h2><p>Download or import a backup file only when you choose.</p><h2>Contact</h2><p>For a privacy question, use the <a href="https://hello-factory.sociobot.in/catalog/?q=dose-count-compass" rel="external">Param Factory product listing (external link)</a>.</p>`) : path === "/terms" ? policy("Terms for using Dose Count Compass", `<p>This tool helps you keep a personal count. It is not medical advice and cannot confirm a device is usable.</p><h2>Your responsibility</h2><p>Check the physical device, its indicator, label, expiry date, and your clinician or pharmacist’s instructions. Keep a backup when your situation requires it.</p><h2>Price</h2><p>Dose Count Compass is free to use.</p>`) : path === "/demo" || path === "/log" || routeIsDemo() ? dashboard() : home();
   document.querySelector("#app")!.innerHTML = view + (editing ? deviceDialog() : "") + importDialog(); bind();
   if (editing) document.querySelector<HTMLDialogElement>("#device-dialog")?.showModal();
   if (pendingImport) document.querySelector<HTMLDialogElement>("#import-dialog")?.showModal();
   if (focusHeading) requestAnimationFrame(() => { const heading = document.querySelector<HTMLElement>("h1"); heading?.focus(); const announcer = document.querySelector<HTMLElement>(".route-announcer"); if (announcer && heading) announcer.textContent = `Now viewing: ${heading.textContent}`; });
+  if (undoSnapshot && undoNamespace === dbName() && Date.now() < undoExpiresAt) requestAnimationFrame(() => showUndoToast("Undo is available for the previous change."));
   if (returnFocusSelector) { const selector = returnFocusSelector; returnFocusSelector = null; requestAnimationFrame(() => document.querySelector<HTMLElement>(selector)?.focus()); }
 }
-function toast(message: string, undo?: () => Promise<void> | void) {
-  const node = document.querySelector<HTMLElement>(".toast"), label = document.querySelector<HTMLElement>(".toast-message"), button = document.querySelector<HTMLButtonElement>(".toast-undo");
-  if (!node || !label || !button) return; window.clearTimeout(undoTimer); label.textContent = message; button.hidden = !undo; button.onclick = undo ? () => { void undo(); } : null; node.classList.add("show");
-  undoTimer = window.setTimeout(() => { node.classList.remove("show"); button.hidden = true; button.onclick = null; }, undo ? 30000 : 2800);
+let undoExpiresAt = 0;
+function hideToast() {
+  const node = document.querySelector<HTMLElement>(".toast"), button = document.querySelector<HTMLButtonElement>(".toast-undo");
+  node?.classList.remove("show"); if (button) { button.hidden = true; button.onclick = null; }
 }
-async function restoreUndo() { if (!undoSnapshot) return; devices = structuredClone(undoSnapshot); undoSnapshot = null; await save(); render(); toast("Previous device list restored."); }
+function clearUndo() { window.clearTimeout(undoTimer); undoTimer = undefined; undoSnapshot = null; undoNamespace = null; undoExpiresAt = 0; hideToast(); }
+function expireUndo() { undoSnapshot = null; undoNamespace = null; undoExpiresAt = 0; undoTimer = undefined; hideToast(); }
+function showUndoToast(message: string) {
+  const node = document.querySelector<HTMLElement>(".toast"), label = document.querySelector<HTMLElement>(".toast-message"), button = document.querySelector<HTMLButtonElement>(".toast-undo");
+  if (!node || !label || !button || !undoSnapshot || Date.now() >= undoExpiresAt) return;
+  label.textContent = message; button.hidden = false; button.onclick = () => { void restoreUndo(); }; node.classList.add("show");
+}
+function beginUndo(snapshot: Device[], message: string) {
+  undoSnapshot = structuredClone(snapshot); undoNamespace = dbName(); undoExpiresAt = Date.now() + undoWindowMs; window.clearTimeout(undoTimer);
+  undoTimer = window.setTimeout(expireUndo, undoWindowMs); showUndoToast(message);
+}
+function toast(message: string) {
+  if (undoSnapshot && Date.now() < undoExpiresAt) { showUndoToast(message); return; }
+  const node = document.querySelector<HTMLElement>(".toast"), label = document.querySelector<HTMLElement>(".toast-message");
+  if (!node || !label) return; window.clearTimeout(undoTimer); label.textContent = message; node.classList.add("show");
+  undoTimer = window.setTimeout(hideToast, 2800);
+}
+async function restoreUndo() { if (!undoSnapshot || undoNamespace !== dbName() || Date.now() >= undoExpiresAt) { expireUndo(); return; } const snapshot = structuredClone(undoSnapshot); clearUndo(); devices = snapshot; await save(); render(); toast("Previous device list restored."); }
 function download(filename: string, content: string, type: string) { const anchor = document.createElement("a"); anchor.href = URL.createObjectURL(new Blob([content], { type })); anchor.download = filename; anchor.click(); window.setTimeout(() => URL.revokeObjectURL(anchor.href), 1000); }
 async function loadNamespace() { const stored = await readState(); devices = stored ?? (demo ? structuredClone(sample) : []); if (!stored && demo) await save(); }
-async function navigate(path: string) { history.pushState({}, "", path); demo = routeIsDemo(path, ""); editing = null; pendingImport = null; await loadNamespace(); render(true); }
-async function syncLocation(focusHeading = false) { if (location.pathname === "/" && routeIsDemo()) history.replaceState({}, "", "/demo"); demo = routeIsDemo(); editing = null; pendingImport = null; await loadNamespace(); render(focusHeading); }
-async function resetDemo() { devices = structuredClone(sample); await save(); render(); toast("Demo reset."); }
-async function startReal() { devices = structuredClone(sample); await save(); await navigate("/log"); }
+async function navigate(path: string) { const nextDemo = routeIsDemo(path, ""); if (nextDemo !== demo) clearUndo(); history.pushState({}, "", path); demo = nextDemo; editing = null; pendingImport = null; await loadNamespace(); render(true); }
+async function syncLocation(focusHeading = false) { if (location.pathname === "/" && routeIsDemo()) history.replaceState({}, "", "/demo"); const nextDemo = routeIsDemo(); if (nextDemo !== demo) clearUndo(); demo = nextDemo; editing = null; pendingImport = null; await loadNamespace(); render(focusHeading); }
+async function resetDemo() { clearUndo(); devices = structuredClone(sample); await save(); render(); toast("Demo reset."); }
+async function startReal() { clearUndo(); devices = structuredClone(sample); await save(); await navigate("/log"); }
 function csvCell(value: string | number) { return `"${String(value).replaceAll('"', '""')}"`; }
 function exportCsv() {
   const rows = ["record_type,device_id,device,type,total,remaining,threshold,updated,event_at,dose_amount"];
   devices.forEach((device) => { rows.push(["device", device.id, device.name, device.kind, device.total, device.remaining, device.threshold, device.updated, "", ""].map(csvCell).join(",")); device.logs.forEach((log) => rows.push(["dose_log", device.id, device.name, device.kind, device.total, "", "", "", log.at, log.amount].map(csvCell).join(","))); });
-  download("dose-count-compass-log.csv", rows.join("\n"), "text/csv"); toast("CSV downloaded.");
+  download("dose-count-compass-log.csv", rows.join("\n"), "text/csv"); toast("Dose-history spreadsheet downloaded.");
 }
 function isRecord(value: unknown): value is Record<string, unknown> { return Boolean(value) && typeof value === "object" && !Array.isArray(value); }
 function validDate(value: unknown) { return typeof value === "string" && !Number.isNaN(Date.parse(value)); }
@@ -154,7 +176,7 @@ async function importBackup(event: Event) {
 }
 async function saveForm(event: SubmitEvent) {
   event.preventDefault(); const form = event.currentTarget as HTMLFormElement, action = (event.submitter as HTMLButtonElement | null)?.value;
-  if (action === "delete" && editing && editing !== "new") { const current = devices.find((device) => device.id === editing); if (!current || !confirm(`Delete ${current.name}? You can undo this for 30 seconds.`)) return; undoSnapshot = structuredClone(devices); devices = devices.filter((device) => device.id !== editing); await save(); editing = null; returnFocusSelector = lastTriggerSelector; render(); toast(`${current.name} was deleted.`, restoreUndo); return; }
+  if (action === "delete" && editing && editing !== "new") { const current = devices.find((device) => device.id === editing); if (!current || !confirm(`Delete ${current.name}? You can undo this for 30 seconds.`)) return; const previous = structuredClone(devices); devices = devices.filter((device) => device.id !== editing); await save(); editing = null; returnFocusSelector = lastTriggerSelector; render(); beginUndo(previous, `${current.name} was deleted.`); return; }
   if (action !== "save") { editing = null; returnFocusSelector = lastTriggerSelector; render(); return; }
   const fields = new FormData(form), total = Number(fields.get("total")), remaining = Number(fields.get("remaining")), threshold = Number(fields.get("threshold"));
   if (![total, remaining, threshold].every(Number.isFinite) || ![total, remaining, threshold].every(Number.isInteger) || total < 1 || remaining < 0 || remaining > total || threshold < 0 || threshold > total) { toast("Set whole-number counts: total at least 1, and refill reminder no higher than total."); return; }
@@ -162,7 +184,7 @@ async function saveForm(event: SubmitEvent) {
   const device: Device = { id: existing?.id ?? id(), name: String(fields.get("name")).trim(), kind: fields.get("kind") as DeviceKind, total, remaining, threshold, notes: String(fields.get("notes")).trim(), logs: existing?.logs ?? [], updated: new Date().toISOString() };
   if (!device.name) return; devices = existing ? devices.map((item) => item.id === device.id ? device : item) : [device, ...devices]; await save(); editing = null; returnFocusSelector = lastTriggerSelector; render(); toast(existing ? "Device updated." : "Device added.");
 }
-async function confirmImport(event: SubmitEvent) { event.preventDefault(); const action = (event.submitter as HTMLButtonElement | null)?.value; if (action !== "replace" || !pendingImport) { pendingImport = null; returnFocusSelector = lastTriggerSelector; render(); return; } undoSnapshot = structuredClone(devices); devices = pendingImport; pendingImport = null; await save(); returnFocusSelector = lastTriggerSelector; render(); toast("Backup imported. You can undo this replacement.", restoreUndo); }
+async function confirmImport(event: SubmitEvent) { event.preventDefault(); const action = (event.submitter as HTMLButtonElement | null)?.value; if (action !== "replace" || !pendingImport) { pendingImport = null; returnFocusSelector = lastTriggerSelector; render(); return; } const previous = structuredClone(devices); devices = pendingImport; pendingImport = null; await save(); returnFocusSelector = lastTriggerSelector; render(); beginUndo(previous, "Backup imported. You can undo this replacement."); }
 function printCard() {
   const entries = devices.map((device) => `<tr><td>${esc(device.name)}</td><td>${device.kind}</td><td>${device.remaining} / ${device.total}</td><td>${device.threshold}</td></tr>`).join(""); const win = window.open("", "_blank"); if (!win) return toast("Allow pop-ups to print the inventory card.");
   win.document.write(`<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Dose Count Compass inventory card</title><link rel="stylesheet" href="/print.css"></head><body><main><h1>Dose Count Compass inventory</h1><p>Check physical indicators and labels too. Printed ${new Date().toLocaleDateString()}.</p><table><thead><tr><th>Device</th><th>Type</th><th>Left</th><th>Refill at</th></tr></thead><tbody>${entries}</tbody></table></main></body></html>`); win.document.close(); win.onload = () => win.print();
