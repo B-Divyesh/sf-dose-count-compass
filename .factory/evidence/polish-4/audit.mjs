@@ -119,6 +119,7 @@ try {
     ["/terms", "Terms — Dose Count Compass"],
   ];
   results.routes = [];
+  const discoveredPaths = new Set(["/robots.txt", "/sitemap.xml", "/manifest.webmanifest", "/favicon.svg", "/icon-180.svg", "/icon-192.svg", "/icon-512.svg", "/social.svg", "/hero-diorama.webp", "/404.css", "/print.css"]);
   for (const [path, title] of expectedRoutes) {
     const response = await desktopPage.goto(`${base}${path}`, { waitUntil: "networkidle" });
     const metadata = await desktopPage.evaluate(() => ({
@@ -135,7 +136,18 @@ try {
     assert(metadata.canonical === `${production}${path}`, `${path} canonical drifted`);
     assert(Boolean(metadata.description) && metadata.h1s === 1, `${path} structure drifted`);
     assert(metadata.legal.includes("Privacy") && metadata.legal.includes("Terms"), `${path} legal links drifted`);
+    for (const href of await desktopPage.locator("a[href]").evaluateAll((links) => links.map((link) => link.getAttribute("href")))) {
+      const url = new URL(href, base);
+      if (url.origin === new URL(base).origin) discoveredPaths.add(url.pathname);
+    }
     results.routes.push({ path, ...metadata });
+  }
+
+  results.linkCrawl = [];
+  for (const path of [...discoveredPaths].sort()) {
+    const response = await desktopPage.request.get(`${base}${path}`);
+    assert(response.status() === 200, `linked route or asset failed: ${path} (${response.status()})`);
+    results.linkCrawl.push({ path, status: response.status() });
   }
 
   results.axe = [];
