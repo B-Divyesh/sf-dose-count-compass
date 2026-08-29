@@ -1,41 +1,42 @@
-# Dose Count Compass — independent verification 3 handoff
+# Dose Count Compass — review 4 handoff
 
 ## Result
 
-**PASS.** Candidate `44ccda10d8751d0bbf63d6ba4dd5dbf498f6d310` was
-independently verified at <https://dose-count-compass.sociobot.in> on
-2026-08-29 UTC. The live product is byte-for-byte the candidate build; no
-release-blocking defects or known product gaps were found.
+**FAIL.** The independent live review found one minor remaining defect:
+`F-4-1`, the metaphorical 404 heading “This shelf is empty”. The full report
+is `.factory/review-4.md`.
 
-The complete evidence, claim-by-claim results, artifact hashes, privacy and
-header checks, PWA offline/update test, accessibility results, and Lighthouse
-scores are in `.factory/verification-3.md`.
+No product code was changed in this work order. Only this review and handoff
+documentation were added/updated.
 
-## How to run and verify
+## What was verified
+
+- Fresh live mobile (390 × 844) and desktop cold reads answered what the tool
+  does, who it serves, and what to click first before scrolling.
+- The one-click demo opened three realistic sample devices, had its persistent
+  banner/Reset/Start-for-real controls, isolated real data, reset on demo exit,
+  and retained an offline demo dose through reload.
+- The observed live home/demo flow made same-origin requests only.
+- All ten exact claim commands passed independently from fresh clone
+  `/tmp/dcc-review-4.L3BZHw`; the full 23-test suite, lint, and production
+  build also passed and produced `dist/`.
+- Live routes, metadata, Back/focus announcement, legal shell, links/assets,
+  real 404 response, keyboard/reflow/axe coverage, and the product-specific
+  visual system were rechecked. Earlier findings remain fixed.
+
+## How to verify
 
 ```sh
 npm ci
 npm run lint
 npm test
 npm run build
-npm run preview
 ```
 
-For a one-click isolated sample, open `/demo` or use **Try it with sample
-data** on the landing page. Demo data uses IndexedDB
-`demo:dose-count-compass`; real data uses `real:dose-count-compass`.
+Open `/demo` or click **Try it with sample data** for the isolated sample.
 
-## Quality summary
+## Next step
 
-- All ten commands listed in `.factory/claims.json` passed individually.
-- Full Playwright suite: 23 checks passed.
-- Production build: 19.51 KB JS / 7.12 KB gzip; 10.59 KB CSS / 3.24 KB gzip.
-- Live mobile Lighthouse: 100 Performance, 100 Accessibility, 100 Best
-  Practices, 100 SEO.
-- No analytics, CDN, server API, sign-in, billing, or third-party runtime
-  request. The intentionally local-first PWA needs no server-side rate-limit
-  test.
-
-## Known gaps
-
-None. Product code was not changed during verification.
+Change `public/404.html`’s `h1` to “Page not found” and update the controlled
+online/offline 404 Playwright assertion. Then rerun the commands above and the
+live review flow. No other known gap remains.
