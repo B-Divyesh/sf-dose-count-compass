@@ -1,1 +1,1 @@
-Count doses and see refill reminders before a medicine device runs out.
+Count medicine-device doses and see when to plan a refill.

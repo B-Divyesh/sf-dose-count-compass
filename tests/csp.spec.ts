@@ -43,7 +43,7 @@ test("production build has no CSP console errors or inline styles", async ({
 test("production routes return a real missing-page response and secure cache headers", async ({ request }) => {
   const missing = await request.get("/not-a-real-page");
   expect(missing.status()).toBe(404);
-  expect(await missing.text()).toContain("This shelf is empty");
+  expect(await missing.text()).toContain("Page not found");
   expect(missing.headers()["content-security-policy"]).toContain("frame-ancestors 'none'");
   expect(missing.headers()["permissions-policy"]).toContain("camera=()");
   const home = await request.get("/");
@@ -65,7 +65,7 @@ test("controlled PWA returns a styled 404 online and offline without resource er
 
   const online = await page.goto("/controlled-missing-page");
   expect(online?.status()).toBe(404);
-  await expect(page.getByRole("heading", { name: "This shelf is empty" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
   await expect(page.locator('link[rel="stylesheet"]')).toHaveAttribute("href", "/404.css");
   await expect(page.locator('meta[name="description"]')).toHaveAttribute("content", /requested Dose Count Compass page/);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://dose-count-compass.sociobot.in/404.html");
@@ -77,8 +77,8 @@ test("controlled PWA returns a styled 404 online and offline without resource er
   await context.setOffline(true);
   const offline = await page.goto("/offline-missing-page");
   expect(offline?.status()).toBe(404);
-  await expect(page.getByRole("heading", { name: "This shelf is empty" })).toBeVisible();
-  expect(await page.getByRole("heading", { name: "This shelf is empty" }).evaluate((node) => getComputedStyle(node).fontFamily)).toContain("Georgia");
+  await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
+  expect(await page.getByRole("heading", { name: "Page not found" }).evaluate((node) => getComputedStyle(node).fontFamily)).toContain("Georgia");
   await context.setOffline(false);
   expect(failures).toEqual([]);
   expect(consoleErrors.filter((message) => /404\.css|ERR_FAILED|stylesheet/i.test(message))).toEqual([]);

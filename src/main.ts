@@ -50,7 +50,7 @@ async function save() { await writeState(devices); }
 function esc(value: string) { const node = document.createElement("span"); node.textContent = value; return node.innerHTML; }
 const id = () => crypto.randomUUID();
 const siteUrl = "https://dose-count-compass.sociobot.in";
-const buildVersion = "1.2.1";
+const buildVersion = "1.2.2";
 function pageTitle(path = location.pathname) {
   if (path === "/privacy") return "Privacy — Dose Count Compass";
   if (path === "/terms") return "Terms — Dose Count Compass";
