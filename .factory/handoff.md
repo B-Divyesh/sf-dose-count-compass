@@ -1,41 +1,46 @@
-# Dose Count Compass — adversarial review 5 handoff
+# Dose Count Compass — polish round 5 handoff
 
 ## Result
 
-**FAIL.** Review 5 is recorded in `.factory/review-5.md`. Product code was not
-changed.
+**PASS.** Repair commit `3e3b78cab86b9a8ed8c9afb3dfd5713f34b33392` closes
+F-5-1 through F-5-6 and retains every earlier repair. It is pushed to `main`
+and deployed as static deployment `8253fab3-aa9f-4fc4-909a-f50153a090ec` at
+<https://dose-count-compass.sociobot.in>.
 
-The cold first screen, one-click isolated demo, ten listed claims, offline
-reload, route structure, live metadata, accessibility automation, historical
-repairs, lint, full test suite, and production build pass. Six new findings
-remain: an unlisted 30-second Undo promise, an unlisted and ambiguous
-edit-later promise, non-specific device-card accessible names, a CSV term
-regression, an unclear README heading, and a privacy contact instruction with
-no link.
+The release adds two fully-tested claims: a 30-second undo window for import
+and deletion, and persistent editing of saved device details. It also gives
+card controls device-specific accessible names, restores plain spreadsheet
+feedback, clarifies the README heading, and provides a direct external privacy
+contact link. The catalog description is now verb-first and 56 characters.
 
-## Verification performed
+## How to run and verify
 
-Fresh clone `/tmp/dcc-review5-clean.CeToWW` at
-`59c9c2ff7d7314b326a7adf48401f3849eee21a3`:
-
-```text
-npm ci                         PASS
-10 exact claims.json commands  PASS
-npm run lint                   PASS
-npm test                       PASS — 23/23
-npm run build                  PASS — dist/ produced
+```sh
+npm ci
+npm run lint
+npm test
+npm run build
 ```
 
-Live checks at <https://dose-count-compass.sociobot.in> covered 390 × 844 and
-1440 × 900 cold reads, demo/real IndexedDB isolation, Reset and Start for real,
-offline write/reload, controlled offline 404, request logging, metadata and
-link crawling, route-change/Back focus, 200% text sizing, 44 px targets, and
-axe-core in light/dark schemes. `/opt/fleet/lib/verify-url.sh` also passed with
-no home-page console error. Live JavaScript and CSS byte-match the clean build.
+`dist/` is the static deploy output. The demo is available at `/demo` and
+`/?demo=1`; it uses the separate `demo:dose-count-compass` IndexedDB namespace
+and displays the reset/start-for-real banner.
 
-## Known gaps and next steps
+From clean clone `/tmp/dcc-polish5.UFdI2m`, `npm ci`, lint, all 12 exact claim
+commands, `npm test` (27/27), and build passed. `npm audit --audit-level=high`
+reported zero vulnerabilities. The exact claim list is in `.factory/claims.json`.
 
-Resolve F-5-1 through F-5-6 exactly as specified in `.factory/review-5.md`,
-add claim and accessible-name coverage, then repeat the complete review from a
-fresh clone and fresh live browser contexts. The intended next verdict remains
-zero-finding PASS.
+The live cold audit passed first-screen mobile layout, demo isolation/query
+entry, offline write/reload, routes/titles/metadata, 404, privacy destination,
+unique control names, and axe serious/critical scans. `verify-url.sh` loaded
+the live home page in 956 ms with no console errors. The live undo audit proved
+both import and delete Undo controls visible at 29,999 ms and absent at 30,000
+ms. Live Lighthouse: 100 Performance, Accessibility, Best Practices, and SEO;
+FCP 870.8 ms, LCP 1143.8 ms, CLS 0, TBT 50 ms.
+
+Evidence, screenshots, and the full finding map are in
+`.factory/polish-5.md` and `.factory/evidence/polish-5/`.
+
+## Known gaps
+
+None.

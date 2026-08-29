@@ -1,0 +1,14 @@
+{
+  "url": "https://dose-count-compass.sociobot.in",
+  "loadMs": 956,
+  "errors": [],
+  "a11y": {
+    "title": "Dose Count Compass — Count medicine doses",
+    "lang": "en",
+    "h1": 1,
+    "main": true,
+    "imgsMissingAlt": 0,
+    "buttonsUnlabeled": 0,
+    "textLength": 1052
+  }
+}

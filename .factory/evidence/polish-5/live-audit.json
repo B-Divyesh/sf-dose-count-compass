@@ -1,0 +1,53 @@
+{
+  "base": "https://dose-count-compass.sociobot.in",
+  "label": "live",
+  "findings": {
+    "f5_2": {
+      "actionNames": [
+        "Log 1 puff for Blue rescue inhaler",
+        "Edit Blue rescue inhaler",
+        "Log 1 spray for Saline spray",
+        "Edit Saline spray",
+        "Log 1 device for Travel injector",
+        "Edit Travel injector"
+      ],
+      "unique": true
+    },
+    "f5_3": {
+      "help": "You can edit the device details later."
+    },
+    "f5_4": {
+      "toast": "Dose-history spreadsheet downloaded."
+    },
+    "f5_6": {
+      "href": "https://hello-factory.sociobot.in/catalog/?q=dose-count-compass",
+      "status": 200
+    }
+  },
+  "firstScreen": {
+    "h1": "Count doses before you run out",
+    "lead": "For people who track doses but do not need a full medicine app.",
+    "facts": [
+      "Saved in your browser",
+      "Works offline after first visit",
+      "Free to use"
+    ],
+    "action": {
+      "x": 16,
+      "y": 388.125,
+      "width": 241.671875,
+      "height": 44,
+      "top": 388.125,
+      "right": 257.671875,
+      "bottom": 432.125,
+      "left": 16
+    },
+    "overflow": false
+  },
+  "offline": {
+    "savedCount": 41,
+    "errors": []
+  },
+  "routesAndAxe": "pass",
+  "completedAt": "2026-08-29T09:55:13.194Z"
+}
