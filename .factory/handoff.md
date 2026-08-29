@@ -1,41 +1,32 @@
-# Dose Count Compass — verification 5 handoff
-
-## Independent release decision (2026-08-29 UTC)
-
-**PASS** — independently verified candidate
-`2d0786359d8a106ba807bdaa17615aeb73aa1f8b` at
-<https://dose-count-compass.sociobot.in>. Product code was not changed during
-this verification. Fresh local `dist/index.html`, hashed JS/CSS, and `sw.js`
-byte-match the live deployment.
-
-From a clean checkout, `npm ci`, `npm run lint`, `npm test` (27/27), and
-`npm run build` passed. All 12 exact claim commands in `.factory/claims.json`
-passed. Live evidence includes a passing cold first-read/demo gate, normal and
-invalid/recovery flows, zero/refill boundaries, export/import/print, offline
-reload, service-worker update toast, keyboard operation, 390px mobile,
-request-log privacy, headers/caching, and axe scans. No console/page errors,
-cross-origin data requests, or serious/critical axe findings were found.
-
-There are no defects by severity. Full evidence, including claim table,
-hashes, headers, and the Lighthouse tooling note, is in
-`.factory/verification-5.md`.
-
-## Previous builder handoff
+# Dose Count Compass — review 6 handoff
 
 ## Result
 
-**PASS.** Repair commit `3e3b78cab86b9a8ed8c9afb3dfd5713f34b33392` closes
-F-5-1 through F-5-6 and retains every earlier repair. It is pushed to `main`
-and deployed as static deployment `8253fab3-aa9f-4fc4-909a-f50153a090ec` at
+**PASS** — adversarial first-read review 6 found zero findings at every
+severity on base `8f0f72044b2e2379f6304636291cf4b18a0ffc13` and the live site at
 <https://dose-count-compass.sociobot.in>.
 
-The release adds two fully-tested claims: a 30-second undo window for import
-and deletion, and persistent editing of saved device details. It also gives
-card controls device-specific accessible names, restores plain spreadsheet
-feedback, clarifies the README heading, and provides a direct external privacy
-contact link. The catalog description is now verb-first and 56 characters.
+Product code was not changed. This work adds `.factory/review-6.md` and
+updates this handoff only.
 
-## How to run and verify
+## What was verified
+
+- Cold 390 × 844 and 1440 × 900 first screens clearly state the job, audience,
+  first action, result, privacy, offline use, and price.
+- The one-click demo immediately shows three realistic devices. Reset,
+  Start for real, separate `demo:`/`real:` storage, real-data preservation,
+  query entry, and offline reload work.
+- Every landing and README sentence passes the 22-word, terminology, heading,
+  and action-label audit.
+- All 12 claim commands pass independently from a fresh clone, with exactly
+  one tagged test per claim and no unlisted live claim.
+- All earlier F-1-1 through F-5-6 findings were rechecked live and in code;
+  none is open or regressed.
+- Core routes, metadata, Back/focus announcements, links, privacy/terms, raw
+  and offline 404 behavior, headers, request privacy, accessibility, mobile
+  sizing, and product-specific visual identity pass.
+
+## How to verify
 
 ```sh
 npm ci
@@ -44,24 +35,20 @@ npm test
 npm run build
 ```
 
-`dist/` is the static deploy output. The demo is available at `/demo` and
-`/?demo=1`; it uses the separate `demo:dose-count-compass` IndexedDB namespace
-and displays the reset/start-for-real banner.
+The fresh clone used for this review was `/tmp/dose-review6-lrHkBh`:
 
-From clean clone `/tmp/dcc-polish5.UFdI2m`, `npm ci`, lint, all 12 exact claim
-commands, `npm test` (27/27), and build passed. `npm audit --audit-level=high`
-reported zero vulnerabilities. The exact claim list is in `.factory/claims.json`.
+```text
+npm ci                         PASS — 20 packages, 0 vulnerabilities
+12 exact claims.json commands  PASS
+npm run lint                   PASS
+npm test                       PASS — 27/27
+npm run build                  PASS — dist/ produced
+```
 
-The live cold audit passed first-screen mobile layout, demo isolation/query
-entry, offline write/reload, routes/titles/metadata, 404, privacy destination,
-unique control names, and axe serious/critical scans. `verify-url.sh` loaded
-the live home page in 956 ms with no console errors. The live undo audit proved
-both import and delete Undo controls visible at 29,999 ms and absent at 30,000
-ms. Live Lighthouse: 100 Performance, Accessibility, Best Practices, and SEO;
-FCP 870.8 ms, LCP 1143.8 ms, CLS 0, TBT 50 ms.
-
-Evidence, screenshots, and the full finding map are in
-`.factory/polish-5.md` and `.factory/evidence/polish-5/`.
+The live factory verifier reported HTTP 200, 590 ms load, no console errors,
+one `h1`, `lang="en"`, a main landmark, complete image alt text, and labeled
+buttons. The live request log remained same-origin throughout the real, demo,
+and offline flow.
 
 ## Known gaps
 
