@@ -28,7 +28,9 @@ glass effects.
 
 Keyboard focus uses a 4px amber outline with a 3px paper gap. The darker amber
 is used on light paper, while Sun amber is used on dark surfaces and in the
-dark theme. Both treatments exceed the 3:1 focus-indicator requirement.
+dark theme. Light warning cards keep the darker amber even in dark mode. Each
+treatment exceeds the 3:1 focus-indicator requirement against its adjacent
+surface.
 
 ## Interaction and motion
 

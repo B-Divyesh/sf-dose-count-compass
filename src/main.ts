@@ -51,7 +51,7 @@ async function save() { await writeState(devices); }
 function esc(value: string) { const node = document.createElement("span"); node.textContent = value; return node.innerHTML; }
 const id = () => crypto.randomUUID();
 const siteUrl = "https://dose-count-compass.sociobot.in";
-const buildVersion = "1.2.3";
+const buildVersion = "1.2.4";
 const undoWindowMs = 30_000;
 function pageTitle(path = location.pathname) {
   if (path === "/privacy") return "Privacy — Dose Count Compass";

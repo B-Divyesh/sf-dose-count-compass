@@ -396,7 +396,14 @@ test("rendered keyboard focus indicators meet 3:1 contrast in both themes", asyn
     const page = await context.newPage();
     const expectFocusContrast = async (indicatorSelector: string, focusSelector = indicatorSelector) => {
       const indicator = page.locator(indicatorSelector).first();
-      await page.locator(focusSelector).first().focus();
+      const focusTarget = page.locator(focusSelector).first();
+      // Reach the target through the real tab order so this measures the
+      // indicator a keyboard user actually receives.
+      for (let step = 0; step < 60 && !(await focusTarget.evaluate((node) => document.activeElement === node)); step += 1) {
+        await page.keyboard.press("Tab");
+      }
+      await expect(focusTarget).toBeFocused();
+      expect(await focusTarget.evaluate((node) => node.matches(":focus-visible"))).toBe(true);
       const colors = await indicator.evaluate((node) => {
         const indicatorStyle = getComputedStyle(node);
         let ancestor = node.parentElement;
@@ -429,6 +436,16 @@ test("rendered keyboard focus indicators meet 3:1 contrast in both themes", asyn
 
     await page.goto("/demo");
     await expectFocusContrast('[data-action="reset-demo"]');
+    await expectFocusContrast('[data-action="edit"][data-id="sample-blue"]');
+    await expectFocusContrast('[data-action="edit"][data-id="sample-injector"]');
+    await page.getByRole("button", { name: "Log 1 device for Travel injector" }).click();
+    await expect(page.locator('[data-device="sample-injector"] .status')).toHaveText("Empty — refill now");
+    await expectFocusContrast('[data-action="edit"][data-id="sample-injector"]');
+
+    await page.getByRole("button", { name: "Edit Blue rescue inhaler" }).click();
+    page.once("dialog", (dialog) => dialog.accept());
+    await page.getByRole("button", { name: "Delete device" }).click();
+    await expectFocusContrast(".toast-undo");
 
     await page.goto("/log");
     await page.getByRole("button", { name: "Add a device" }).click();
@@ -445,14 +462,32 @@ test("rendered keyboard focus indicators meet 3:1 contrast in both themes", asyn
 test("390px mobile has no horizontal overflow and all visible controls meet target size", async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
+  const expectUsableTargets = async () => {
+    const undersized = await page.locator("button, a, input, select, textarea").evaluateAll((nodes) => nodes.filter((node) => {
+      if (!(node as HTMLElement).offsetParent) return false;
+      const rect = (node as HTMLElement).getBoundingClientRect();
+      return rect.width < 44 || rect.height < 44;
+    }).map((node) => ({
+      height: (node as HTMLElement).getBoundingClientRect().height,
+      name: (node as HTMLElement).getAttribute("aria-label") || (node as HTMLElement).textContent?.trim(),
+      width: (node as HTMLElement).getBoundingClientRect().width,
+    })));
+    expect(undersized).toEqual([]);
+  };
+
   await page.goto("/demo");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  const undersized = await page.locator("button, a, input[type=file]").evaluateAll((nodes) => nodes.filter((node) => {
-    if (!(node as HTMLElement).offsetParent) return false;
-    const rect = (node as HTMLElement).getBoundingClientRect();
-    return rect.width < 44 || rect.height < 44;
-  }).map((node) => (node as HTMLElement).getAttribute("aria-label") || (node as HTMLElement).textContent?.trim()));
-  expect(undersized).toEqual([]);
+  await expectUsableTargets();
+
+  await page.getByRole("button", { name: "Edit Blue rescue inhaler" }).click();
+  await expectUsableTargets();
+  await page.keyboard.press("Escape");
+
+  await page.getByRole("button", { name: "Edit Blue rescue inhaler" }).click();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Delete device" }).click();
+  await expect(page.getByRole("button", { name: "Undo" })).toBeVisible();
+  await expectUsableTargets();
   await context.close();
 });
 

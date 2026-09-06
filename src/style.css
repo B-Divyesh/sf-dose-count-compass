@@ -10,6 +10,7 @@
   --line: #b7ae9d;
   --focus-ring: #7a4a00;
   --focus-ring-dark: #e6a93d;
+  --focus-ring-on-light-card: #7a4a00;
   font-family:
     ui-sans-serif,
     system-ui,
@@ -188,6 +189,10 @@ nav a {
 .demo-bar .link-button:focus-visible,
 .toast button:focus-visible {
   outline-color: var(--focus-ring-dark);
+}
+.device-card.low button:focus-visible,
+.device-card.empty button:focus-visible {
+  outline-color: var(--focus-ring-on-light-card);
 }
 .connection {
   margin: 0 auto;
@@ -556,7 +561,8 @@ figcaption {
   font-size: 1.5rem;
   line-height: 1;
   padding: 4px 12px;
-  min-height: 38px;
+  min-height: 44px;
+  min-width: 44px;
 }
 .form-help {
   font-size: 0.9rem;
@@ -639,7 +645,7 @@ menu {
   visibility: visible;
 }
 .toast-undo {
-  min-height: 38px;
+  min-height: 44px;
   min-width: 44px;
   border-color: var(--sun);
   background: var(--paper);
