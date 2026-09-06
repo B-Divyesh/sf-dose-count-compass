@@ -8,6 +8,8 @@
   --night: #102821;
   --mint: #c8e0c6;
   --line: #b7ae9d;
+  --focus-ring: #7a4a00;
+  --focus-ring-dark: #e6a93d;
   font-family:
     ui-sans-serif,
     system-ui,
@@ -106,7 +108,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 4px solid var(--sun);
+  outline: 4px solid var(--focus-ring);
   outline-offset: 3px;
 }
 .skip {
@@ -182,6 +184,10 @@ nav a {
 .demo-bar .link-button {
   color: #fff;
   min-height: 44px;
+}
+.demo-bar .link-button:focus-visible,
+.toast button:focus-visible {
+  outline-color: var(--focus-ring-dark);
 }
 .connection {
   margin: 0 auto;
@@ -505,7 +511,7 @@ figcaption {
   position: relative;
 }
 .file-label:focus-within {
-  outline: 4px solid var(--sun);
+  outline: 4px solid var(--focus-ring);
   outline-offset: 3px;
 }
 .safety-note {
@@ -758,6 +764,7 @@ footer a {
     --shelf: #264437;
     --mint: #355f4d;
     --line: #78917f;
+    --focus-ring: #e6a93d;
   }
   input,
   select,

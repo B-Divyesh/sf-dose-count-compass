@@ -1,4 +1,4 @@
-:root { color: #19362e; background: #fbf7ed; font-family: ui-sans-serif, system-ui, sans-serif; }
+:root { --focus-ring: #7a4a00; color: #19362e; background: #fbf7ed; font-family: ui-sans-serif, system-ui, sans-serif; }
 * { box-sizing: border-box; }
 body { margin: 0; }
 header, main, footer { max-width: 900px; margin: auto; padding: 24px; }
@@ -17,6 +17,6 @@ footer p { margin: 0; }
 footer p:last-child { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
 .skip { position: absolute; top: -50px; left: 12px; background: #102821; color: white; padding: 10px; }
 .skip:focus { top: 12px; }
-a:focus-visible { outline: 4px solid #e6a93d; outline-offset: 3px; }
-@media (prefers-color-scheme: dark) { :root { color: #f8f3e7; background: #102821; } main > p:first-child { color: #a9d8b8; } }
+a:focus-visible { outline: 4px solid var(--focus-ring); outline-offset: 3px; }
+@media (prefers-color-scheme: dark) { :root { --focus-ring: #e6a93d; color: #f8f3e7; background: #102821; } main > p:first-child { color: #a9d8b8; } }
 @media (max-width: 620px) { header, main, footer { padding-left: 16px; padding-right: 16px; } header { gap: 8px; } nav { width: 100%; justify-content: space-between; gap: 8px; } nav a { flex: 1 1 44px; justify-content: center; font-size: .86rem; } footer { flex-direction: column; } }

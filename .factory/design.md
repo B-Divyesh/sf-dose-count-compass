@@ -17,12 +17,18 @@ finite object without pretending to be clinical advice.
 - Coral: `#b84f3e` (urgent)
 - Night: `#102821` (dark treatment)
 - Mint: `#c8e0c6` (dark surface accent)
+- Focus on paper: `#7a4a00` (dark amber, 6.99:1 against Paper)
+- Focus on dark: `#e6a93d` (Sun amber, 7.50:1 against Night)
 
 The paired type is `Georgia` for the quiet, human display voice and a
 self-hosted system UI fallback stack for controls and numbers. Numbers use
 tabular figures. Space follows an 8px scale with generous 24–48px paper
 margins. Cards have clipped corners and layered offset shadows, not floating
 glass effects.
+
+Keyboard focus uses a 4px amber outline with a 3px paper gap. The darker amber
+is used on light paper, while Sun amber is used on dark surfaces and in the
+dark theme. Both treatments exceed the 3:1 focus-indicator requirement.
 
 ## Interaction and motion
 

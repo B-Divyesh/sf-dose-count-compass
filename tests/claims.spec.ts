@@ -2,6 +2,26 @@ import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import axe from "axe-core";
 
+function parseRgb(color: string): [number, number, number] {
+  const channels = color.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+  if (!channels || channels.length !== 3) throw new Error(`Cannot parse color: ${color}`);
+  return channels as [number, number, number];
+}
+
+function relativeLuminance(color: string) {
+  const [red, green, blue] = parseRgb(color).map((channel) => {
+    const value = channel / 255;
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+}
+
+function contrastRatio(first: string, second: string) {
+  const lighter = Math.max(relativeLuminance(first), relativeLuminance(second));
+  const darker = Math.min(relativeLuminance(first), relativeLuminance(second));
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 test("@claim:offline-reload Works offline after the first visit", async ({
   page,
   context,
@@ -368,6 +388,58 @@ test("keyboard order, dialog return focus, file focus, and 200% reflow are usabl
   await expect(page.locator(".file-label")).toHaveCSS("outline-style", "solid");
   await page.evaluate(() => { document.documentElement.style.fontSize = "200%"; });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
+test("rendered keyboard focus indicators meet 3:1 contrast in both themes", async ({ browser }) => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    const context = await browser.newContext({ colorScheme });
+    const page = await context.newPage();
+    const expectFocusContrast = async (indicatorSelector: string, focusSelector = indicatorSelector) => {
+      const indicator = page.locator(indicatorSelector).first();
+      await page.locator(focusSelector).first().focus();
+      const colors = await indicator.evaluate((node) => {
+        const indicatorStyle = getComputedStyle(node);
+        let ancestor = node.parentElement;
+        let background = "";
+        while (ancestor) {
+          const candidate = getComputedStyle(ancestor).backgroundColor;
+          if (candidate !== "transparent" && candidate !== "rgba(0, 0, 0, 0)") {
+            background = candidate;
+            break;
+          }
+          ancestor = ancestor.parentElement;
+        }
+        return {
+          background,
+          outlineColor: indicatorStyle.outlineColor,
+          outlineStyle: indicatorStyle.outlineStyle,
+          outlineWidth: Number.parseFloat(indicatorStyle.outlineWidth),
+        };
+      });
+      expect(colors.outlineStyle).toBe("solid");
+      expect(colors.outlineWidth).toBeGreaterThanOrEqual(2);
+      expect(
+        contrastRatio(colors.outlineColor, colors.background),
+        `${colorScheme} ${indicatorSelector} focus ring against ${colors.background}`,
+      ).toBeGreaterThanOrEqual(3);
+    };
+
+    await page.goto("/");
+    await expectFocusContrast('header nav a[href="/demo"]');
+
+    await page.goto("/demo");
+    await expectFocusContrast('[data-action="reset-demo"]');
+
+    await page.goto("/log");
+    await page.getByRole("button", { name: "Add a device" }).click();
+    await expectFocusContrast('input[name="name"]');
+    await page.keyboard.press("Escape");
+    await expectFocusContrast('.file-label', '.file-label input');
+
+    await page.goto("/focus-contrast-missing");
+    await expectFocusContrast('header nav a[href="/demo"]');
+    await context.close();
+  }
 });
 
 test("390px mobile has no horizontal overflow and all visible controls meet target size", async ({ browser }) => {
