@@ -1,0 +1,241 @@
+{
+  "implementation": "f9e96d315183c516be71d4e2e1e3e982d80621ab",
+  "desktopFirstScreen": {
+    "statusText": "Online",
+    "title": "Dose Count Compass — Count medicine doses",
+    "job": "Count doses before you run out",
+    "audience": "For people who track doses but do not need a full medicine app.",
+    "firstAction": "Try it with sample data",
+    "actionResult": "See three devices already counted.",
+    "actionBottom": 476,
+    "factsBottom": 516,
+    "scrollY": 0,
+    "h1Count": 1,
+    "hasMain": true,
+    "lang": "en",
+    "noOverflow": true
+  },
+  "phoneFirstScreen": {
+    "statusText": "Online",
+    "title": "Dose Count Compass — Count medicine doses",
+    "job": "Count doses before you run out",
+    "audience": "For people who track doses but do not need a full medicine app.",
+    "firstAction": "Try it with sample data",
+    "actionResult": "See three devices already counted.",
+    "actionBottom": 432,
+    "factsBottom": 593,
+    "scrollY": 0,
+    "h1Count": 1,
+    "hasMain": true,
+    "lang": "en",
+    "noOverflow": true
+  },
+  "productFlow": {
+    "samples": [
+      "Blue rescue inhaler",
+      "Saline spray",
+      "Travel injector"
+    ],
+    "realCountAfterDemo": 2,
+    "resetCount": 42,
+    "backupDevices": 3,
+    "csvDeviceRows": 3,
+    "csvDoseRows": 4,
+    "printDevices": 3
+  },
+  "privacy": {
+    "crossOriginRequests": [],
+    "browserErrors": []
+  },
+  "routes": {
+    "/": {
+      "status": 200,
+      "title": "Dose Count Compass — Count medicine doses"
+    },
+    "/demo": {
+      "status": 200,
+      "title": "Demo — Dose Count Compass"
+    },
+    "/log": {
+      "status": 200,
+      "title": "Dose Count Compass — Track device doses"
+    },
+    "/privacy": {
+      "status": 200,
+      "title": "Privacy — Dose Count Compass"
+    },
+    "/terms": {
+      "status": 200,
+      "title": "Terms — Dose Count Compass"
+    }
+  },
+  "missingPage": {
+    "status": 404,
+    "heading": "Page not found",
+    "sharedFooter": true
+  },
+  "focus": {
+    "light": {
+      "navigation": {
+        "background": "rgb(251, 247, 237)",
+        "outline": "rgb(122, 74, 0)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 6.99
+      },
+      "darkDemoBar": {
+        "background": "rgb(16, 40, 33)",
+        "outline": "rgb(230, 169, 61)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 7.5
+      },
+      "normalCard": {
+        "background": "rgb(231, 224, 207)",
+        "outline": "rgb(122, 74, 0)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 5.69
+      },
+      "lightWarningCard": {
+        "background": "rgb(246, 228, 190)",
+        "outline": "rgb(122, 74, 0)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 5.97
+      },
+      "lightEmptyCard": {
+        "background": "rgb(244, 211, 205)",
+        "outline": "rgb(122, 74, 0)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 5.36
+      },
+      "undoToast": {
+        "background": "rgb(16, 40, 33)",
+        "outline": "rgb(230, 169, 61)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 7.5
+      },
+      "formField": {
+        "background": "rgb(251, 247, 237)",
+        "outline": "rgb(122, 74, 0)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 6.99
+      },
+      "importControl": {
+        "background": "rgb(251, 247, 237)",
+        "outline": "rgb(122, 74, 0)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 6.99
+      },
+      "missingPage": {
+        "background": "rgb(251, 247, 237)",
+        "outline": "rgb(122, 74, 0)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 6.99
+      }
+    },
+    "dark": {
+      "navigation": {
+        "background": "rgb(16, 40, 33)",
+        "outline": "rgb(230, 169, 61)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 7.5
+      },
+      "darkDemoBar": {
+        "background": "rgb(16, 40, 33)",
+        "outline": "rgb(230, 169, 61)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 7.5
+      },
+      "normalCard": {
+        "background": "rgb(38, 68, 55)",
+        "outline": "rgb(230, 169, 61)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 5.15
+      },
+      "lightWarningCard": {
+        "background": "rgb(246, 228, 190)",
+        "outline": "rgb(122, 74, 0)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 5.97
+      },
+      "lightEmptyCard": {
+        "background": "rgb(244, 211, 205)",
+        "outline": "rgb(122, 74, 0)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 5.36
+      },
+      "undoToast": {
+        "background": "rgb(16, 40, 33)",
+        "outline": "rgb(230, 169, 61)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 7.5
+      },
+      "formField": {
+        "background": "rgb(16, 40, 33)",
+        "outline": "rgb(230, 169, 61)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 7.5
+      },
+      "importControl": {
+        "background": "rgb(16, 40, 33)",
+        "outline": "rgb(230, 169, 61)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 7.5
+      },
+      "missingPage": {
+        "background": "rgb(16, 40, 33)",
+        "outline": "rgb(230, 169, 61)",
+        "width": 4,
+        "style": "solid",
+        "ratio": 7.5
+      }
+    }
+  },
+  "offline": {
+    "loggedCountAfterReload": 41,
+    "connection": "Offline",
+    "updateCheck": "completed"
+  },
+  "reducedMotion": "1e-05s",
+  "axe": {
+    "/": {
+      "total": 0,
+      "seriousOrCritical": 0
+    },
+    "/demo": {
+      "total": 0,
+      "seriousOrCritical": 0
+    },
+    "/log": {
+      "total": 0,
+      "seriousOrCritical": 0
+    },
+    "/privacy": {
+      "total": 0,
+      "seriousOrCritical": 0
+    },
+    "/terms": {
+      "total": 0,
+      "seriousOrCritical": 0
+    },
+    "/repair-3-axe-missing": {
+      "total": 0,
+      "seriousOrCritical": 0
+    }
+  }
+}
